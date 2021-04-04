@@ -86,7 +86,7 @@ class ProgDeepFakeArchi(nn.ArchiBase):
                     return nn.flatten(x)
 
                 def get_out_res(self, res):
-                    return res // (2**4)
+                    return res
 
                 def get_out_ch(self):
                     return self.out_ch
