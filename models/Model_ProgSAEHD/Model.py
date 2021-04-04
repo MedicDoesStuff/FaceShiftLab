@@ -108,7 +108,7 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                         continue
 
                     if 'd' in archi_opts:
-                        continue
+                        pass
                         # self.options['resolution'] = np.clip ( (self.options['resolution'] // 32) * 32, min_res, max_res)
 
                 break
