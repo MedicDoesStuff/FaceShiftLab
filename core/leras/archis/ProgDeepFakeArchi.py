@@ -73,13 +73,13 @@ class ProgDeepFakeArchi(nn.ArchiBase):
                     return x
 
             class FromRgb0(nn.ModelBase):
-                def __init__(self, in_ch, e_ch, kernel_size=1 ):
+                def __init__(self, in_ch, e_ch, **kwargs ):
                     self.in_ch = in_ch
                     self.out_ch = e_ch * 8
                     super().__init__(**kwargs)
 
                 def on_build(self):
-                    self.conv = nn.Conv2D(in_ch, out_ch, kernel_size=kernel_size, padding='SAME')
+                    self.conv = nn.Conv2D(in_ch, out_ch, kernel_size=1, padding='SAME')
 
                 def forward(self, inp):
                     x = self.conv(inp)
