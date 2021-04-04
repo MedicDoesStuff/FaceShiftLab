@@ -9,7 +9,6 @@ class ProgDeepFakeArchi(nn.ArchiBase):
             'quick'
     """
     def __init__(self, resolution, mod=None, opts=None):
-        self.lowest_dense_res = resolution // (32 if 'd' in opts else 16)
         super().__init__()
 
         if opts is None:
@@ -110,6 +109,8 @@ class ProgDeepFakeArchi(nn.ArchiBase):
                 def get_out_ch(self):
                     return self.e_ch * 8
 
+            lowest_dense_res = resolution // (2 if 'd' in opts else 1)
+
             class Inter(nn.ModelBase):
                 def __init__(self, in_ch, ae_ch, ae_out_ch, **kwargs):
                     self.in_ch, self.ae_ch, self.ae_out_ch = in_ch, ae_ch, ae_out_ch
@@ -121,7 +122,7 @@ class ProgDeepFakeArchi(nn.ArchiBase):
                         self.dense_norm = nn.DenseNorm()
 
                     self.dense1 = nn.Dense( in_ch, ae_ch )
-                    self.dense2 = nn.Dense( ae_ch, self.lowest_dense_res * self.lowest_dense_res * ae_out_ch )
+                    self.dense2 = nn.Dense( ae_ch, lowest_dense_res * lowest_dense_res * ae_out_ch )
                     self.upscale1 = Upscale(ae_out_ch, ae_out_ch)
 
                 def forward(self, inp):
@@ -130,12 +131,12 @@ class ProgDeepFakeArchi(nn.ArchiBase):
                         x = self.dense_norm(x)
                     x = self.dense1(x)
                     x = self.dense2(x)
-                    x = nn.reshape_4D (x, self.lowest_dense_res, self.lowest_dense_res, self.ae_out_ch)
+                    x = nn.reshape_4D (x, lowest_dense_res, lowest_dense_res, self.ae_out_ch)
                     x = self.upscale1(x)
                     return x
 
                 def get_out_res(self):
-                    return self.lowest_dense_res * 2
+                    return lowest_dense_res * 2
 
                 def get_out_ch(self):
                     return self.ae_out_ch
