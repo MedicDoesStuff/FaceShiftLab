@@ -79,7 +79,7 @@ class ProgDeepFakeArchi(nn.ArchiBase):
                     super().__init__(**kwargs)
 
                 def on_build(self):
-                    self.conv = nn.Conv2D(in_ch, out_ch, kernel_size=1, padding='SAME')
+                    self.conv = nn.Conv2D(self.in_ch, self.out_ch, kernel_size=1, padding='SAME')
 
                 def forward(self, inp):
                     x = self.conv(inp)
