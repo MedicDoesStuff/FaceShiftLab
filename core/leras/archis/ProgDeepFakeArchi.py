@@ -237,5 +237,7 @@ class ProgDeepFakeArchi(nn.ArchiBase):
         self.Encoder = Encoder
         self.Inter = Inter
         self.Decoder = Decoder
+        self.FromRgb0 = FromRgb0
+        self.ToRgb0 = ToRgb0
 
-nn.DeepFakeArchi = DeepFakeArchi
+nn.ProgDeepFakeArchi = ProgDeepFakeArchi
