@@ -144,7 +144,7 @@ class ProgDeepFakeArchi(nn.ArchiBase):
             class ToRgb0(nn.ModelBase):
                 def on_build(self, in_ch ):
                     self.out_conv  = nn.Conv2D( in_ch, 3, kernel_size=1, padding='SAME')
-                    self.out_convm = nn.Conv2D( in_ch*2, 1, kernel_size=1, padding='SAME')
+                    self.out_convm = nn.Conv2D( in_ch, 1, kernel_size=1, padding='SAME')
 
 
                 def forward(self, inp):
