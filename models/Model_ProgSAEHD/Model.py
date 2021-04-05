@@ -293,7 +293,7 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
             self.grow_alpha = tf.placeholder(nn.floatx, shape=(), name="grow_alpha")
 
         # Initializing model classes
-        model_archi = nn.ProgDeepFakeArchi(resolution, opts=archi_opts)
+        model_archi = nn.ProgDeepFakeArchi(self.options['final_resolution'], opts=archi_opts)
 
         with tf.device (models_opt_device):
             if 'df' in archi_type:
