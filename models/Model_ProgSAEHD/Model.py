@@ -329,7 +329,7 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                                                  [self.encoder_block_0, 'encoder_block_0'],
                                                  [self.encoder, 'from_rgb_1.npy']]
 
-                encoder_out_ch = 2**3 * (self.options['final_resolution'] // 2**4)**2
+                encoder_out_ch = e_dims * 2**3 * (self.options['final_resolution'] // 2**4)**2
                 self.inter_AB = model_archi.Inter(in_ch=encoder_out_ch, ae_ch=ae_dims, ae_out_ch=ae_dims*2, name='inter_AB')
                 self.inter_B  = model_archi.Inter(in_ch=encoder_out_ch, ae_ch=ae_dims, ae_out_ch=ae_dims*2, name='inter_B')
                 self.model_filename_list += [[self.inter_AB, 'inter_AB.npy'], [self.inter_B , 'inter_B.npy']]
@@ -343,7 +343,7 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                 elif self.options['scale'] == 0 and self.options['grow']:
                     self.decoder_prev = model_archi.ToRgb0(in_ch=inters_out_ch, name='to_rgb_0')
                     self.decoder_block_0 = model_archi.DecoderBlock0(in_ch=inters_out_ch, name='upscale_0')
-                    self.decoder = model_archi.ToRgb0(in_ch=d_dims*8, in_ch_m=d_mask_dims*8, name='to_rgb_0')
+                    self.decoder = model_archi.ToRgb1(in_ch=d_dims*8, in_ch_m=d_mask_dims*8, name='to_rgb_0')
                     self.model_filename_list += [[self.decoder_prev, 'to_rgb_0.npy'],
                                                  [self.decoder_block_0, 'decoder_block_0.npy'],
                                                  [self.decoder, 'to_rgb_1.npy']]
