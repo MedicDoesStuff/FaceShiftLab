@@ -860,7 +860,7 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
             io.log_info('You are training the model from scratch. It is strongly recommended to use a pretrained model to speed up the training and improve the quality.\n')
 
         bs = self.get_batch_size()
-        grow_alpha = self.grow_alpha + 1 / (1000 * self.options['grow_k_iterations'])
+        self.options['grow_alpha'] += 1 / (1000 * self.options['grow_k_iterations'])
 
         ( (warped_src, target_src, target_srcm, target_srcm_em), \
           (warped_dst, target_dst, target_dstm, target_dstm_em) ) = self.generate_next_samples()
@@ -883,7 +883,7 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
             target_dstm       = np.stack( [ x[1] for x in dst_samples_loss[:bs] ] )
             target_dstm_em = np.stack( [ x[2] for x in dst_samples_loss[:bs] ] )
 
-            src_loss, dst_loss = self.src_dst_train (target_src, target_src, target_srcm, target_srcm_em, target_dst, target_dst, target_dstm, target_dstm_em, grow_alpha)
+            src_loss, dst_loss = self.src_dst_train (target_src, target_src, target_srcm, target_srcm_em, target_dst, target_dst, target_dstm, target_dstm_em, self.options['grow_alpha'] )
             self.last_src_samples_loss = []
             self.last_dst_samples_loss = []
 
@@ -900,7 +900,7 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
         ( (warped_src, target_src, target_srcm, target_srcm_em),
           (warped_dst, target_dst, target_dstm, target_dstm_em) ) = samples
 
-        S, D, SS, SSM, DD, DDM, SD, SDM = [ np.clip( nn.to_data_format(x,"NHWC", self.model_data_format), 0.0, 1.0) for x in ([target_src,target_dst] + self.AE_view (target_src, target_dst, self.grow_alpha) ) ]
+        S, D, SS, SSM, DD, DDM, SD, SDM = [ np.clip( nn.to_data_format(x,"NHWC", self.model_data_format), 0.0, 1.0) for x in ([target_src,target_dst] + self.AE_view (target_src, target_dst, self.options['grow_alpha'] ) ) ]
         SSM, DDM, SDM, = [ np.repeat (x, (3,), -1) for x in [SSM, DDM, SDM] ]
 
         target_srcm, target_dstm = [ nn.to_data_format(x,"NHWC", self.model_data_format) for x in ([target_srcm, target_dstm] )]
