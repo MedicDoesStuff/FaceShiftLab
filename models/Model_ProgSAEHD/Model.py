@@ -323,7 +323,7 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                     self.model_filename_list += [[self.encoder,  'from_rgb_0.npy']]
                 elif self.options['scale'] == 0 and self.options['grow']:
                     self.encoder_prev = model_archi.FromRgb0(in_ch=input_ch, e_ch=e_dims, name='from_rgb_0')
-                    self.encoder_block_0 = model_archi.EncoderBlock0(in_ch=input_ch, e_ch=e_dims, name='encoder_block_0')
+                    self.encoder_block_0 = model_archi.EncoderBlock0(e_ch=e_dims, name='encoder_block_0')
                     self.encoder = model_archi.FromRgb1(in_ch=input_ch, e_ch=e_dims, name='from_rgb_1')
                     self.model_filename_list += [[self.encoder_prev, 'from_rgb_0.npy'],
                                                  [self.encoder_block_0, 'encoder_block_0'],
