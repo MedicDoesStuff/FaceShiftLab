@@ -860,7 +860,7 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
             io.log_info('You are training the model from scratch. It is strongly recommended to use a pretrained model to speed up the training and improve the quality.\n')
 
         bs = self.get_batch_size()
-        grow_alpha = self.grow_alpha + 1 / (1000* self.options['grow_k_iterations'])
+        grow_alpha = self.grow_alpha + 1 / (1000 * self.options['grow_k_iterations'])
 
         ( (warped_src, target_src, target_srcm, target_srcm_em), \
           (warped_dst, target_dst, target_dstm, target_dstm_em) ) = self.generate_next_samples()
