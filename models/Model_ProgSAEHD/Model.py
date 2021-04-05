@@ -863,7 +863,8 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
 
         bs = self.get_batch_size()
         if self.options['grow']:
-            self.grow_alpha += 1 / (1000 * self.options['grow_k_iterations'])
+            self.options['grow_alpha'] += 1 / (1000 * self.options['grow_k_iterations'])
+            self.grow_alpha = self.options['grow_alpha']
 
         ( (warped_src, target_src, target_srcm, target_srcm_em), \
           (warped_dst, target_dst, target_dstm, target_dstm_em) ) = self.generate_next_samples()
