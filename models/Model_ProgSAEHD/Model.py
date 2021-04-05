@@ -218,7 +218,7 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
         tf = nn.tf
 
         self.options['scale'] = self.load_or_def_option('scale', 0)
-        self.options['grow_alpha'] = self.load_or_def_option('grow_alpha', 0.0)
+        self.grow_alpha = self.options['grow_alpha'] = self.load_or_def_option('grow_alpha', 0.0)
         self.options['resolution'] = self.options['final_resolution'] // 2**(4-self.options['scale'])
         if self.options['grow']:
             self.options['resolution'] *= 2
@@ -290,7 +290,7 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
             self.target_dstm    = tf.placeholder (nn.floatx, mask_shape)
             self.target_dstm_em = tf.placeholder (nn.floatx, mask_shape)
 
-            self.grow_alpha = tf.placeholder(nn.floatx, shape=(), name="grow_alpha")
+            self.alpha = tf.placeholder(nn.floatx, shape=(), name="grow_alpha")
 
         # Initializing model classes
         model_archi = nn.ProgDeepFakeArchi(self.options['final_resolution'], opts=archi_opts)
@@ -447,11 +447,11 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                         if self.options['grow']:
                             gpu_src_code_prev = self.encoder_prev(nn.resize2d_area(gpu_warped_src, size=-2))
                             gpu_src_code_next = self.encoder(self.encoder_block_0(gpu_warped_src))
-                            gpu_src_code = self.grow_alpha * gpu_src_code_next + (1 - self.grow_alpha) * gpu_src_code_prev
+                            gpu_src_code = self.alpha * gpu_src_code_next + (1 - self.alpha) * gpu_src_code_prev
 
                             gpu_dst_code_prev = self.encoder_prev(nn.resize2d_area(gpu_warped_dst, size=-2))
                             gpu_dst_code_next = self.encoder(self.encoder_block_0(gpu_warped_dst))
-                            gpu_dst_code = self.grow_alpha * gpu_dst_code_next + (1 - self.grow_alpha) * gpu_dst_code_prev
+                            gpu_dst_code = self.alpha * gpu_dst_code_next + (1 - self.alpha) * gpu_dst_code_prev
                         else:
                             gpu_src_code = self.encoder (gpu_warped_src)
                             gpu_dst_code = self.encoder (gpu_warped_dst)
@@ -480,12 +480,12 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                             gpu_pred_dst_dst_next, gpu_pred_dst_dstm_next = self.decoder(self.decoder_block_0(gpu_dst_code))
                             gpu_pred_src_dst_next, gpu_pred_src_dstm_next = self.decoder(self.decoder_block_0(gpu_src_dst_code))
 
-                            gpu_pred_src_src = self.grow_alpha * gpu_pred_src_src_next + (1-self.grow_alpha) * gpu_pred_src_src_prev
-                            gpu_pred_src_srcm = self.grow_alpha * gpu_pred_src_srcm_next + (1-self.grow_alpha) * gpu_pred_src_srcm_prev
-                            gpu_pred_dst_dst = self.grow_alpha * gpu_pred_dst_dst_next + (1-self.grow_alpha) * gpu_pred_dst_dst_prev
-                            gpu_pred_dst_dstm = self.grow_alpha * gpu_pred_dst_dstm_next + (1-self.grow_alpha) * gpu_pred_dst_dstm_prev
-                            gpu_pred_src_dst = self.grow_alpha * gpu_pred_src_dst_next + (1-self.grow_alpha) * gpu_pred_src_dst_prev
-                            gpu_pred_src_dstm = self.grow_alpha * gpu_pred_src_dstm_next + (1-self.grow_alpha) * gpu_pred_src_dstm_prev
+                            gpu_pred_src_src = self.alpha * gpu_pred_src_src_next + (1-self.alpha) * gpu_pred_src_src_prev
+                            gpu_pred_src_srcm = self.alpha * gpu_pred_src_srcm_next + (1-self.alpha) * gpu_pred_src_srcm_prev
+                            gpu_pred_dst_dst = self.alpha * gpu_pred_dst_dst_next + (1-self.alpha) * gpu_pred_dst_dst_prev
+                            gpu_pred_dst_dstm = self.alpha * gpu_pred_dst_dstm_next + (1-self.alpha) * gpu_pred_dst_dstm_prev
+                            gpu_pred_src_dst = self.alpha * gpu_pred_src_dst_next + (1-self.alpha) * gpu_pred_src_dst_prev
+                            gpu_pred_src_dstm = self.alpha * gpu_pred_src_dstm_next + (1-self.alpha) * gpu_pred_src_dstm_prev
                         else:
                             gpu_pred_src_src, gpu_pred_src_srcm = self.decoder(gpu_src_code)
                             gpu_pred_dst_dst, gpu_pred_dst_dstm = self.decoder(gpu_dst_code)
@@ -705,7 +705,7 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
             # Initializing training and view functions
             def src_dst_train(warped_src, target_src, target_srcm, target_srcm_em,  \
                               warped_dst, target_dst, target_dstm, target_dstm_em,
-                              grow_alpha):
+                              alpha):
                 s, d, _ = nn.tf_sess.run ( [ src_loss, dst_loss, src_dst_loss_gv_op],
                                             feed_dict={self.warped_src :warped_src,
                                                        self.target_src :target_src,
@@ -715,7 +715,7 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                                                        self.target_dst :target_dst,
                                                        self.target_dstm:target_dstm,
                                                        self.target_dstm_em:target_dstm_em,
-                                                       self.grow_alpha:grow_alpha,
+                                                       self.alpha:alpha,
                                                        })
                 return s, d
             self.src_dst_train = src_dst_train
@@ -728,7 +728,7 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
             if gan_power != 0:
                 def D_src_dst_train(warped_src, target_src, target_srcm, target_srcm_em,  \
                                     warped_dst, target_dst, target_dstm, target_dstm_em,
-                                    grow_alpha):
+                                    alpha):
                     nn.tf_sess.run ([src_D_src_dst_loss_gv_op], feed_dict={self.warped_src :warped_src,
                                                                            self.target_src :target_src,
                                                                            self.target_srcm:target_srcm,
@@ -737,7 +737,7 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                                                                            self.target_dst :target_dst,
                                                                            self.target_dstm:target_dstm,
                                                                            self.target_dstm_em:target_dstm_em,
-                                                                           self.grow_alpha:grow_alpha})
+                                                                           self.grow_alpha:alpha})
                 self.D_src_dst_train = D_src_dst_train
 
 
@@ -745,7 +745,7 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                 return nn.tf_sess.run ( [pred_src_src, pred_src_srcm, pred_dst_dst, pred_dst_dstm, pred_src_dst, pred_src_dstm],
                                             feed_dict={self.warped_src:warped_src,
                                                     self.warped_dst:warped_dst,
-                                                       self.grow_alpha: grow_alpha})
+                                                       self.grow_alpha: alpha})
             self.AE_view = AE_view
         else:
             # Initializing merge function
@@ -860,12 +860,12 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
             io.log_info('You are training the model from scratch. It is strongly recommended to use a pretrained model to speed up the training and improve the quality.\n')
 
         bs = self.get_batch_size()
-        self.options['grow_alpha'] += 1 / (1000 * self.options['grow_k_iterations'])
+        self.grow_alpha += 1 / (1000 * self.options['grow_k_iterations'])
 
         ( (warped_src, target_src, target_srcm, target_srcm_em), \
           (warped_dst, target_dst, target_dstm, target_dstm_em) ) = self.generate_next_samples()
 
-        src_loss, dst_loss = self.src_dst_train (warped_src, target_src, target_srcm, target_srcm_em, warped_dst, target_dst, target_dstm, target_dstm_em, grow_alpha)
+        src_loss, dst_loss = self.src_dst_train (warped_src, target_src, target_srcm, target_srcm_em, warped_dst, target_dst, target_dstm, target_dstm_em, self.grow_alpha)
 
         for i in range(bs):
             self.last_src_samples_loss.append (  (target_src[i], target_srcm[i], target_srcm_em[i], src_loss[i] )  )
@@ -883,7 +883,7 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
             target_dstm       = np.stack( [ x[1] for x in dst_samples_loss[:bs] ] )
             target_dstm_em = np.stack( [ x[2] for x in dst_samples_loss[:bs] ] )
 
-            src_loss, dst_loss = self.src_dst_train (target_src, target_src, target_srcm, target_srcm_em, target_dst, target_dst, target_dstm, target_dstm_em, self.options['grow_alpha'] )
+            src_loss, dst_loss = self.src_dst_train (target_src, target_src, target_srcm, target_srcm_em, target_dst, target_dst, target_dstm, target_dstm_em, self.grow_alpha )
             self.last_src_samples_loss = []
             self.last_dst_samples_loss = []
 
@@ -900,7 +900,7 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
         ( (warped_src, target_src, target_srcm, target_srcm_em),
           (warped_dst, target_dst, target_dstm, target_dstm_em) ) = samples
 
-        S, D, SS, SSM, DD, DDM, SD, SDM = [ np.clip( nn.to_data_format(x,"NHWC", self.model_data_format), 0.0, 1.0) for x in ([target_src,target_dst] + self.AE_view (target_src, target_dst, self.options['grow_alpha'] ) ) ]
+        S, D, SS, SSM, DD, DDM, SD, SDM = [ np.clip( nn.to_data_format(x,"NHWC", self.model_data_format), 0.0, 1.0) for x in ([target_src,target_dst] + self.AE_view (target_src, target_dst, self.grow_alpha ) ) ]
         SSM, DDM, SDM, = [ np.repeat (x, (3,), -1) for x in [SSM, DDM, SDM] ]
 
         target_srcm, target_dstm = [ nn.to_data_format(x,"NHWC", self.model_data_format) for x in ([target_srcm, target_dstm] )]
