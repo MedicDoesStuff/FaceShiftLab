@@ -78,7 +78,7 @@ class SAEHDModel(ModelBase):
             self.ask_batch_size(suggest_batch_size)
 
         if self.is_first_run():
-            final_resolution = io.input_int("Resolution", default_final_resolution, add_info="64-640", help_message="More resolution requires more VRAM and time to train. Value will be adjusted to multiple of 16 and 32 for -d archi.")
+            final_resolution = io.input_int("Final resolution", default_final_resolution, add_info="64-640", help_message="More resolution requires more VRAM and time to train. Value will be adjusted to multiple of 16 and 32 for -d archi.")
             final_resolution = np.clip ( (final_resolution // 16) * 16, min_res, max_res)
             self.options['final_resolution'] = final_resolution
             self.options['face_type'] = io.input_str ("Face type", default_face_type, ['h','mf','f','wf','head', 'custom'], help_message="Half / mid face / full face / whole face / head / custom. Half face has better resolution, but covers less area of cheeks. Mid face is 30% wider than half face. 'Whole face' covers full area of face include forehead. 'head' covers full head, but requires XSeg for src and dst faceset.").lower()
@@ -152,7 +152,7 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
 
         default_gan_version        = self.options['gan_version']        = self.load_or_def_option('gan_version', 2)
         default_gan_power          = self.options['gan_power']          = self.load_or_def_option('gan_power', 0.0)
-        default_gan_patch_size     = self.options['gan_patch_size']     = self.load_or_def_option('gan_patch_size', self.options['resolution'] // 8)
+        default_gan_patch_size     = self.options['gan_patch_size']     = self.load_or_def_option('gan_patch_size', self.options['final_resolution'] // 8)
         default_gan_dims           = self.options['gan_dims']           = self.load_or_def_option('gan_dims', 16)
         default_gan_smoothing      = self.options['gan_smoothing']      = self.load_or_def_option('gan_smoothing', 0.1)
         default_gan_noise          = self.options['gan_noise']          = self.load_or_def_option('gan_noise', 0.05)
