@@ -3,12 +3,12 @@ tf = nn.tf
 
 class ProgDeepFakeArchi(nn.ArchiBase):
     """
-    resolution
+    final_resolution
 
     mod     None - default
             'quick'
     """
-    def __init__(self, resolution, mod=None, opts=None):
+    def __init__(self, final_resolution, mod=None, opts=None):
         super().__init__()
 
         if opts is None:
@@ -91,6 +91,32 @@ class ProgDeepFakeArchi(nn.ArchiBase):
                 def get_out_ch(self):
                     return self.out_ch
 
+            class FromRgb1(nn.ModelBase):
+                def __init__(self, in_ch, e_ch, **kwargs ):
+                    self.in_ch = in_ch
+                    self.out_ch = e_ch * 4
+                    super().__init__(**kwargs)
+
+                def on_build(self):
+                    self.conv = nn.Conv2D(self.in_ch, self.out_ch, kernel_size=1, padding='SAME')
+
+                def forward(self, inp):
+                    x = self.conv(inp)
+                    x = tf.nn.leaky_relu(x, 0.1)
+
+                def get_out_res(self, res):
+                    return res
+
+                def get_out_ch(self):
+                    return self.out_ch
+
+            class EncoderBlock0(nn.ModelBase):
+                def on_build(self, in_ch, e_ch, n_downscales, kernel_size):
+                    self.down = Downscale(in_ch, e_ch*8, kernel_size=kernel_size)
+
+                def forward(self, inp):
+                    return self.down(inp)
+
             class Encoder(nn.ModelBase):
                 def __init__(self, in_ch, e_ch, **kwargs ):
                     self.in_ch = in_ch
@@ -109,7 +135,7 @@ class ProgDeepFakeArchi(nn.ArchiBase):
                 def get_out_ch(self):
                     return self.e_ch * 8
 
-            lowest_dense_res = resolution // (2 if 'd' in opts else 1)
+            lowest_dense_res = final_resolution // (32 if 'd' in opts else 16)
 
             class Inter(nn.ModelBase):
                 def __init__(self, in_ch, ae_ch, ae_out_ch, **kwargs):
@@ -148,8 +174,33 @@ class ProgDeepFakeArchi(nn.ArchiBase):
 
 
                 def forward(self, inp):
-                    x = self.out_conv(inp)
+                    x = tf.nn.sigmoid(self.out_conv(inp))
                     m = tf.nn.sigmoid(self.out_convm(inp))
+                    return x, m
+
+            class ToRgb1(nn.ModelBase):
+                def on_build(self, in_ch, in_ch_m ):
+                    self.out_conv  = nn.Conv2D( in_ch, 3, kernel_size=1, padding='SAME')
+                    self.out_convm = nn.Conv2D( in_ch_m, 1, kernel_size=1, padding='SAME')
+
+
+                def forward(self, inp):
+                    x, m = inp
+                    x = tf.nn.sigmoid(self.out_convm(x))
+                    m = tf.nn.sigmoid(self.out_convm(m))
+                    return x, m
+
+            class DecoderBlock0(nn.ModelBase):
+                def on_build(self, in_ch, d_ch, d_mask_ch ):
+                    self.upscale0 = Upscale(in_ch, d_ch*8, kernel_size=3)
+                    self.res0 = ResidualBlock(d_ch*8, kernel_size=3)
+                    self.upscalem0 = Upscale(in_ch, d_mask_ch*8, kernel_size=3)
+
+                def forward(self, inp):
+                    x = self.upscale0(inp)
+                    x = self.res0(x)
+                    m = self.upscalem0(inp)
+
                     return x, m
 
             class Decoder(nn.ModelBase):
@@ -200,9 +251,9 @@ class ProgDeepFakeArchi(nn.ArchiBase):
                         x3 = nn.upsample2d(x3)
 
                         if nn.data_format == "NHWC":
-                            tile_cfg = ( 1, resolution // 2, resolution //2, 1)
+                            tile_cfg = ( 1, final_resolution // 2, final_resolution //2, 1)
                         else:
-                            tile_cfg = ( 1, 1, resolution // 2, resolution //2 )
+                            tile_cfg = ( 1, 1, final_resolution // 2, final_resolution //2 )
 
                         z0 =  tf.concat ( ( tf.concat ( (  tf.ones ( (1,1,1,1) ), tf.zeros ( (1,1,1,1) ) ), axis=nn.conv2d_spatial_axes[1] ),
                                             tf.concat ( ( tf.zeros ( (1,1,1,1) ), tf.zeros ( (1,1,1,1) ) ), axis=nn.conv2d_spatial_axes[1] ) ), axis=nn.conv2d_spatial_axes[0] )
@@ -239,6 +290,10 @@ class ProgDeepFakeArchi(nn.ArchiBase):
         self.Inter = Inter
         self.Decoder = Decoder
         self.FromRgb0 = FromRgb0
+        self.FromRgb1 = FromRgb1
         self.ToRgb0 = ToRgb0
+        self.ToRgb1 = ToRgb1
+        self.EncoderBlock0 = EncoderBlock0
+        self.DecoderBlock0 = DecoderBlock0
 
 nn.ProgDeepFakeArchi = ProgDeepFakeArchi

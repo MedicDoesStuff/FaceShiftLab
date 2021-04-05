@@ -170,6 +170,39 @@ def resize2d_nearest(x, size=2):
     return x
 nn.resize2d_nearest = resize2d_nearest
 
+def resize2d_area(x, size=2):
+    if size in [-1,0,1]:
+        return x
+
+
+    if size > 0:
+        raise Exception("")
+    else:
+        if nn.data_format == "NCHW":
+            x = x[:,:,::-size,::-size]
+        else:
+            x = x[:,::-size,::-size,:]
+    return x
+
+    h = x.shape[nn.conv2d_spatial_axes[0]].value
+    w = x.shape[nn.conv2d_spatial_axes[1]].value
+
+    if nn.data_format == "NCHW":
+        x = tf.transpose(x, (0,2,3,1))
+
+    if size > 0:
+        new_size = (h*size,w*size)
+    else:
+        new_size = (h//-size,w//-size)
+
+    x = tf.image.resize(x, new_size, method=tf.image.ResizeMethod.AREA)
+
+    if nn.data_format == "NCHW":
+        x = tf.transpose(x, (0,3,1,2))
+
+    return x
+nn.resize2d_area = resize2d_area
+
 def flatten(x):
     if nn.data_format == "NHWC":
         # match NCHW version in order to switch data_format without problems
@@ -385,7 +418,7 @@ def total_variation_mse(images):
     """
     pixel_dif1 = images[:, 1:, :, :] - images[:, :-1, :, :]
     pixel_dif2 = images[:, :, 1:, :] - images[:, :, :-1, :]
-    
+
     tot_var = ( tf.reduce_sum(tf.square(pixel_dif1), axis=[1,2,3]) +
                 tf.reduce_sum(tf.square(pixel_dif2), axis=[1,2,3]) )
     return tot_var
