@@ -918,7 +918,7 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
             for i in range(n_samples):
                 ar = S[i], SS[i], D[i], DD[i], SD[i]
                 st.append ( np.concatenate ( ar, axis=1) )
-            result += [ ('SAEHD', np.concatenate (st, axis=0 )), ]
+            result += [ ('ProgSAEHD', np.concatenate (st, axis=0 )), ]
 
 
             st_m = []
@@ -928,7 +928,7 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                 ar = S[i]*target_srcm[i], SS[i]*SSM[i], D[i]*target_dstm[i], DD[i]*DDM[i], SD[i]*SD_mask
                 st_m.append ( np.concatenate ( ar, axis=1) )
 
-            result += [ ('SAEHD masked', np.concatenate (st_m, axis=0 )), ]
+            result += [ ('ProgSAEHD masked', np.concatenate (st_m, axis=0 )), ]
         else:
             result = []
 
@@ -936,39 +936,39 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
             for i in range(n_samples):
                 ar = S[i], SS[i]
                 st.append ( np.concatenate ( ar, axis=1) )
-            result += [ ('SAEHD src-src', np.concatenate (st, axis=0 )), ]
+            result += [ ('ProgSAEHD src-src', np.concatenate (st, axis=0 )), ]
 
             st = []
             for i in range(n_samples):
                 ar = D[i], DD[i]
                 st.append ( np.concatenate ( ar, axis=1) )
-            result += [ ('SAEHD dst-dst', np.concatenate (st, axis=0 )), ]
+            result += [ ('ProgSAEHD dst-dst', np.concatenate (st, axis=0 )), ]
 
             st = []
             for i in range(n_samples):
                 ar = D[i], SD[i]
                 st.append ( np.concatenate ( ar, axis=1) )
-            result += [ ('SAEHD pred', np.concatenate (st, axis=0 )), ]
+            result += [ ('ProgSAEHD pred', np.concatenate (st, axis=0 )), ]
 
 
             st_m = []
             for i in range(n_samples):
                 ar = S[i]*target_srcm[i], SS[i]*SSM[i]
                 st_m.append ( np.concatenate ( ar, axis=1) )
-            result += [ ('SAEHD masked src-src', np.concatenate (st_m, axis=0 )), ]
+            result += [ ('ProgSAEHD masked src-src', np.concatenate (st_m, axis=0 )), ]
 
             st_m = []
             for i in range(n_samples):
                 ar = D[i]*target_dstm[i], DD[i]*DDM[i]
                 st_m.append ( np.concatenate ( ar, axis=1) )
-            result += [ ('SAEHD masked dst-dst', np.concatenate (st_m, axis=0 )), ]
+            result += [ ('ProgSAEHD masked dst-dst', np.concatenate (st_m, axis=0 )), ]
 
             st_m = []
             for i in range(n_samples):
                 SD_mask = DDM[i]*SDM[i] if self.face_type < FaceType.HEAD else SDM[i]
                 ar = D[i]*target_dstm[i], SD[i]*SD_mask
                 st_m.append ( np.concatenate ( ar, axis=1) )
-            result += [ ('SAEHD masked pred', np.concatenate (st_m, axis=0 )), ]
+            result += [ ('ProgSAEHD masked pred', np.concatenate (st_m, axis=0 )), ]
 
 
         if self.resolution < self.options['final_resolution']:
