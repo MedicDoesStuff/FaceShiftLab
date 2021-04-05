@@ -290,7 +290,7 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
             self.target_dstm    = tf.placeholder (nn.floatx, mask_shape)
             self.target_dstm_em = tf.placeholder (nn.floatx, mask_shape)
 
-            self.alpha = tf.placeholder(nn.floatx, shape=(), name="grow_alpha")
+            self.alpha = tf.Variable(0)
 
         # Initializing model classes
         model_archi = nn.ProgDeepFakeArchi(self.options['final_resolution'], opts=archi_opts)
