@@ -728,7 +728,7 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
             if gan_power != 0:
                 def D_src_dst_train(warped_src, target_src, target_srcm, target_srcm_em,  \
                                     warped_dst, target_dst, target_dstm, target_dstm_em,
-                                    grow_alpha):
+                                    alpha):
                     nn.tf_sess.run ([src_D_src_dst_loss_gv_op], feed_dict={self.warped_src :warped_src,
                                                                            self.target_src :target_src,
                                                                            self.target_srcm:target_srcm,
@@ -737,15 +737,15 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                                                                            self.target_dst :target_dst,
                                                                            self.target_dstm:target_dstm,
                                                                            self.target_dstm_em:target_dstm_em,
-                                                                           self.grow_alpha:grow_alpha})
+                                                                           self.alpha:alpha})
                 self.D_src_dst_train = D_src_dst_train
 
 
-            def AE_view(warped_src, warped_dst, grow_alpha):
+            def AE_view(warped_src, warped_dst, alpha):
                 return nn.tf_sess.run ( [pred_src_src, pred_src_srcm, pred_dst_dst, pred_dst_dstm, pred_src_dst, pred_src_dstm],
                                             feed_dict={self.warped_src:warped_src,
                                                     self.warped_dst:warped_dst,
-                                                       self.grow_alpha: grow_alpha})
+                                                       self.alpha: alpha})
             self.AE_view = AE_view
         else:
             # Initializing merge function
