@@ -329,7 +329,7 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                                                  [self.encoder_block_0, 'encoder_block_0'],
                                                  [self.encoder, 'from_rgb_1.npy']]
 
-                encoder_out_ch = self.encoder.get_out_ch()*self.encoder.get_out_res(resolution)**2
+                encoder_out_ch = 2**3 * (self.options['final_resolution'] // 2**4)**2
                 self.inter_AB = model_archi.Inter(in_ch=encoder_out_ch, ae_ch=ae_dims, ae_out_ch=ae_dims*2, name='inter_AB')
                 self.inter_B  = model_archi.Inter(in_ch=encoder_out_ch, ae_ch=ae_dims, ae_out_ch=ae_dims*2, name='inter_B')
                 self.model_filename_list += [[self.inter_AB, 'inter_AB.npy'], [self.inter_B , 'inter_B.npy']]
