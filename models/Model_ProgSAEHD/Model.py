@@ -970,6 +970,10 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                 st_m.append ( np.concatenate ( ar, axis=1) )
             result += [ ('SAEHD masked pred', np.concatenate (st_m, axis=0 )), ]
 
+
+        if self.resolution < self.options['final_resolution']:
+            scale = self.options['final_resolution'] // self.resolution
+            result = [(name, np.repeat(np.repeat(img, scale, axis=0), scale, axis=1) for name, img in result]
         return result
 
     def predictor_func (self, face=None):
