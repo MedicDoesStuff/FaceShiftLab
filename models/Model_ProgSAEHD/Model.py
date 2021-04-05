@@ -218,10 +218,12 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
         tf = nn.tf
 
         self.options['scale'] = self.load_or_def_option('scale', 0)
-        self.grow_alpha = self.options['grow_alpha'] = self.load_or_def_option('grow_alpha', 0.0)
         self.options['resolution'] = self.options['final_resolution'] // 2**(4-self.options['scale'])
         if self.options['grow']:
             self.options['resolution'] *= 2
+            self.grow_alpha = self.options['grow_alpha'] = self.load_or_def_option('grow_alpha', 0.0)
+        else:
+            self.grow_alpha = self.options['grow_alpha'] = 0.0
 
 
         self.resolution = resolution = self.options['resolution']
@@ -860,7 +862,8 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
             io.log_info('You are training the model from scratch. It is strongly recommended to use a pretrained model to speed up the training and improve the quality.\n')
 
         bs = self.get_batch_size()
-        self.grow_alpha += 1 / (1000 * self.options['grow_k_iterations'])
+        if self.options['grow']:
+            self.grow_alpha += 1 / (1000 * self.options['grow_k_iterations'])
 
         ( (warped_src, target_src, target_srcm, target_srcm_em), \
           (warped_dst, target_dst, target_dstm, target_dstm_em) ) = self.generate_next_samples()
