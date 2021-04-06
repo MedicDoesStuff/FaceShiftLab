@@ -190,8 +190,7 @@ class ProgDeepFakeArchi(nn.ArchiBase):
                     self.out_convm = nn.Conv2D( in_ch_m, 1, kernel_size=1, padding='SAME')
 
 
-                def forward(self, inp):
-                    x, m = inp
+                def forward(self, x, m):
                     x = tf.nn.sigmoid(self.out_convm(x))
                     m = tf.nn.sigmoid(self.out_convm(m))
                     return x, m
