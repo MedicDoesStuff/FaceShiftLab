@@ -345,7 +345,7 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                 elif self.options['scale'] == 0 and self.options['grow']:
                     self.decoder_prev = model_archi.ToRgb0(in_ch=inters_out_ch, name='to_rgb_0')
                     self.decoder_block_0 = model_archi.DecoderBlock0(in_ch=inters_out_ch, d_ch=d_dims, d_mask_ch=d_mask_dims, name='decoder_block_0')
-                    self.decoder = model_archi.ToRgb1(in_ch=d_dims*8, in_ch_m=d_mask_dims*8, name='to_rgb_0')
+                    self.decoder = model_archi.ToRgb1(in_ch=d_dims*8, in_ch_m=d_mask_dims*8, name='to_rgb_1')
                     self.model_filename_list += [[self.decoder_prev, 'to_rgb_0.npy'],
                                                  [self.decoder_block_0, 'decoder_block_0.npy'],
                                                  [self.decoder, 'to_rgb_1.npy']]
