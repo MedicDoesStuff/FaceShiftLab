@@ -345,10 +345,12 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                 elif self.options['scale'] == 0 and self.options['grow']:
                     self.decoder_prev = model_archi.ToRgb0(in_ch=inters_out_ch, name='to_rgb_0')
                     self.decoder_block_0 = model_archi.DecoderBlock0(in_ch=inters_out_ch, d_ch=d_dims, d_mask_ch=d_mask_dims, name='decoder_block_0')
-                    self.decoder = model_archi.ToRgb1(in_ch=d_dims*8, in_ch_m=d_mask_dims*8, name='to_rgb_1')
+                    self.decoder = model_archi.ToRgb1(in_ch=d_dims*8, name='to_rgb_1')
+                    self.decoder_mask = model_archi.ToMask1(in_ch_m=d_mask_dims*8, name='to_mask_1')
                     self.model_filename_list += [[self.decoder_prev, 'to_rgb_0.npy'],
                                                  [self.decoder_block_0, 'decoder_block_0.npy'],
-                                                 [self.decoder, 'to_rgb_1.npy']]
+                                                 [self.decoder, 'to_rgb_1.npy'],
+                                                 [self.decoder_mask, 'to_mask_1']]
 
 
             if self.is_training:
@@ -377,7 +379,8 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                                                          + self.inter_B.get_weights() \
                                                          + self.decoder_prev.get_weights() \
                                                          + self.decoder_block_0.get_weights() \
-                                                         + self.decoder.get_weights()
+                                                         + self.decoder.get_weights() \
+                                                         + self.decoder_mask.get_weights()
                     else:
                         self.src_dst_trainable_weights = self.encoder.get_weights() + self.inter_AB.get_weights() + self.inter_B.get_weights() + self.decoder.get_weights()
 
@@ -479,11 +482,14 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                             gpu_pred_src_dstm_prev = nn.resize2d_nearest(gpu_pred_src_dstm_prev, size=2)
 
                             x, m = self.decoder_block_0(gpu_src_code)
-                            gpu_pred_src_src_next, gpu_pred_src_srcm_next = self.decoder(x, m)
+                            gpu_pred_src_src_next = self.decoder(x)
+                            gpu_pred_src_srcm_next = self.decoder_mask(m)
                             x, m = self.decoder_block_0(gpu_dst_code)
-                            gpu_pred_dst_dst_next, gpu_pred_dst_dstm_next = self.decoder(x, m)
+                            gpu_pred_dst_dst_next = self.decoder(x)
+                            gpu_pred_dst_dstm_next = self.decoder_mask(m)
                             x, m = self.decoder_block_0(gpu_src_dst_code)
-                            gpu_pred_src_dst_next, gpu_pred_src_dstm_next = self.decoder(x, m)
+                            gpu_pred_src_dst_next = self.decoder(x)
+                            gpu_pred_src_dstm_next = self.decoder_mask(m)
 
                             gpu_pred_src_src = self.alpha * gpu_pred_src_src_next + (1-self.alpha) * gpu_pred_src_src_prev
                             gpu_pred_src_srcm = self.alpha * gpu_pred_src_srcm_next + (1-self.alpha) * gpu_pred_src_srcm_prev

@@ -185,15 +185,22 @@ class ProgDeepFakeArchi(nn.ArchiBase):
                     return x, m
 
             class ToRgb1(nn.ModelBase):
-                def on_build(self, in_ch, in_ch_m ):
+                def on_build(self, in_ch ):
                     self.out_conv  = nn.Conv2D( in_ch, 3, kernel_size=1, padding='SAME')
+
+
+                def forward(self, x):
+                    x = tf.nn.sigmoid(self.out_convm(x))
+                    return x
+
+            class ToMask1(nn.ModelBase):
+                def on_build(self, in_ch_m ):
                     self.out_convm = nn.Conv2D( in_ch_m, 1, kernel_size=1, padding='SAME')
 
 
-                def forward(self, x, m):
-                    x = tf.nn.sigmoid(self.out_convm(x))
+                def forward(self, m):
                     m = tf.nn.sigmoid(self.out_convm(m))
-                    return x, m
+                    return m
 
             class DecoderBlock0(nn.ModelBase):
                 def on_build(self, in_ch, d_ch, d_mask_ch ):
@@ -298,6 +305,7 @@ class ProgDeepFakeArchi(nn.ArchiBase):
         self.FromRgb1 = FromRgb1
         self.ToRgb0 = ToRgb0
         self.ToRgb1 = ToRgb1
+        self.ToMask1 = ToMask1
         self.EncoderBlock0 = EncoderBlock0
         self.DecoderBlock0 = DecoderBlock0
 
