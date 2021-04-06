@@ -142,14 +142,12 @@ def resize2d_nearest(x, size=2):
         return x
 
 
-    if size > 0:
-        raise Exception("")
-    else:
+    if size < 0:
         if nn.data_format == "NCHW":
             x = x[:,:,::-size,::-size]
         else:
             x = x[:,::-size,::-size,:]
-    return x
+        return x
 
     h = x.shape[nn.conv2d_spatial_axes[0]].value
     w = x.shape[nn.conv2d_spatial_axes[1]].value
