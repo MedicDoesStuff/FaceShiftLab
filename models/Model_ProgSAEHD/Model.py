@@ -478,9 +478,12 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                             gpu_pred_src_dst_prev = nn.resize2d_nearest(gpu_pred_src_dst_prev, size=2)
                             gpu_pred_src_dstm_prev = nn.resize2d_nearest(gpu_pred_src_dstm_prev, size=2)
 
-                            gpu_pred_src_src_next, gpu_pred_src_srcm_next = self.decoder(self.decoder_block_0(gpu_src_code))
-                            gpu_pred_dst_dst_next, gpu_pred_dst_dstm_next = self.decoder(self.decoder_block_0(gpu_dst_code))
-                            gpu_pred_src_dst_next, gpu_pred_src_dstm_next = self.decoder(self.decoder_block_0(gpu_src_dst_code))
+                            x, m = self.decoder_block_0(gpu_src_code)
+                            gpu_pred_src_src_next, gpu_pred_src_srcm_next = self.decoder(x, m)
+                            x, m = self.decoder_block_0(gpu_dst_code)
+                            gpu_pred_dst_dst_next, gpu_pred_dst_dstm_next = self.decoder(x, m)
+                            x, m = self.decoder_block_0(gpu_src_dst_code)
+                            gpu_pred_src_dst_next, gpu_pred_src_dstm_next = self.decoder(x, m)
 
                             gpu_pred_src_src = self.alpha * gpu_pred_src_src_next + (1-self.alpha) * gpu_pred_src_src_prev
                             gpu_pred_src_srcm = self.alpha * gpu_pred_src_srcm_next + (1-self.alpha) * gpu_pred_src_srcm_prev
