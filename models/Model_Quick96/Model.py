@@ -39,7 +39,7 @@ class QModel(ModelBase):
         mask_shape = nn.get4Dshape(resolution,resolution,1)
 
         self.model_filename_list = []
-        
+
         model_archi = nn.DeepFakeArchi(resolution, opts='ud')
 
         with tf.device ('/CPU:0'):
@@ -94,7 +94,7 @@ class QModel(ModelBase):
             gpu_src_losses = []
             gpu_dst_losses = []
             gpu_src_dst_loss_gvs = []
-            
+
             for gpu_id in range(gpu_count):
                 with tf.device( f'/GPU:{gpu_id}' if len(devices) != 0 else f'/CPU:0' ):
                     batch_slice = slice( gpu_id*bs_per_gpu, (gpu_id+1)*bs_per_gpu )
@@ -275,7 +275,7 @@ class QModel(ModelBase):
         src_loss, dst_loss = self.src_dst_train (warped_src, target_src, target_srcm,
                                                  warped_dst, target_dst, target_dstm)
 
-        return ( ('src_loss', src_loss), ('dst_loss', dst_loss), )
+        return {'src_loss': src_loss, 'dst_loss': dst_loss}
 
     #override
     def onGetPreview(self, samples):

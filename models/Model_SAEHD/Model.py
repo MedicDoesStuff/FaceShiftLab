@@ -807,7 +807,7 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
         if self.gan_power != 0:
             self.D_src_dst_train (warped_src, target_src, target_srcm, target_srcm_em, warped_dst, target_dst, target_dstm, target_dstm_em)
 
-        return ( ('src_loss', np.mean(src_loss) ), ('dst_loss', np.mean(dst_loss) ), )
+        return {'src_loss': np.mean(src_loss), 'dst_loss': np.mean(dst_loss)}
 
     #override
     def onGetPreview(self, samples):

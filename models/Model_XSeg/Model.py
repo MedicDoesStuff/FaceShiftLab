@@ -160,7 +160,7 @@ class XSegModel(ModelBase):
     def onTrainOneIter(self):
         image_np, mask_np = self.generate_next_samples()[0]
         loss = self.train (image_np, mask_np)
-        return ( ('loss', np.mean(loss) ), )
+        return {'loss': np.mean(loss)}
 
     #override
     def onGetPreview(self, samples):

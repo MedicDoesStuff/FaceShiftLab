@@ -333,8 +333,8 @@ class ModelBase(object):
     def onTrainOneIter(self, sample, generator_list):
         #train your models here
 
-        #return array of losses
-        return ( ('loss_src', 0), ('loss_dst', 0) )
+        #return dict of losses
+        return {'loss_src': 0, 'loss_dst': 0}
 
     #overridable
     def onGetPreview(self, sample):
@@ -462,7 +462,7 @@ class ModelBase(object):
         losses = self.onTrainOneIter()
         iter_time = time.time() - iter_time
 
-        self.loss_history.append ( [float(loss[1]) for loss in losses] )
+        self.loss_history.append ( [float(v) for k, v in losses.items()] )
 
         if self.should_save_preview_history():
             plist = []
