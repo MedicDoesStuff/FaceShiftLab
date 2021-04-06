@@ -478,7 +478,7 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                             gpu_pred_src_dst_prev = nn.resize2d_nearest(gpu_pred_src_dst_prev, size=2)
                             gpu_pred_src_dstm_prev = nn.resize2d_nearest(gpu_pred_src_dstm_prev, size=2)
 
-                            gpu_pred_src_src_next, gpu_pred_src_srcm_next = self.decoder(inputs=self.decoder_block_0(gpu_src_code))
+                            gpu_pred_src_src_next, gpu_pred_src_srcm_next = self.decoder(input=self.decoder_block_0(gpu_src_code))
                             gpu_pred_dst_dst_next, gpu_pred_dst_dstm_next = self.decoder(self.decoder_block_0(gpu_dst_code))
                             gpu_pred_src_dst_next, gpu_pred_src_dstm_next = self.decoder(self.decoder_block_0(gpu_src_dst_code))
 
