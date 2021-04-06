@@ -103,6 +103,7 @@ class ProgDeepFakeArchi(nn.ArchiBase):
                 def forward(self, inp):
                     x = self.conv(inp)
                     x = tf.nn.leaky_relu(x, 0.1)
+                    return x
 
                 def get_out_res(self, res):
                     return res
