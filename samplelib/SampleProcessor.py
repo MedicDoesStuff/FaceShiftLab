@@ -172,8 +172,10 @@ class SampleProcessor(object):
                                 mat = LandmarksProcessor.get_transform_mat (sample_landmarks, resolution, face_type)
                                 img = cv2.warpAffine( img, mat, (resolution,resolution), borderMode=borderMode, flags=cv2.INTER_LINEAR )
                             else:
-                                if w != resolution:
+                                if w < resolution:
                                     img = cv2.resize( img, (resolution, resolution), interpolation=cv2.INTER_LINEAR )
+                                elif w > resolution:
+                                    img = cv2.resize( img, (resolution, resolution), interpolation=cv2.INTER_AREA )
 
                             img = imagelib.warp_by_params (params_per_resolution[resolution], img, warp, transform, can_flip=True, border_replicate=border_replicate, cv2_inter=cv2.INTER_LINEAR)
 
@@ -253,7 +255,10 @@ class SampleProcessor(object):
                 elif sample_type == SPST.IMAGE:
                     img = sample_bgr
                     img  = imagelib.warp_by_params (params_per_resolution[resolution], img,  warp, transform, can_flip=True, border_replicate=True)
-                    img  = cv2.resize( img,  (resolution, resolution), interpolation=cv2.INTER_CUBIC )
+                    if w < resolution:
+                        img  = cv2.resize( img,  (resolution, resolution), interpolation=cv2.INTER_CUBIC )
+                    elif w > resolution:
+                        img  = cv2.resize( img,  (resolution, resolution), interpolation=cv2.INTER_AREA )
                     out_sample = img
 
                     if data_format == "NCHW":
