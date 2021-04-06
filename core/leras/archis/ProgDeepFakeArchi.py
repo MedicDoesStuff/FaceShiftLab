@@ -190,7 +190,7 @@ class ProgDeepFakeArchi(nn.ArchiBase):
 
 
                 def forward(self, x):
-                    x = tf.nn.sigmoid(self.out_convm(x))
+                    x = tf.nn.sigmoid(self.out_conv(x))
                     return x
 
             class ToMask1(nn.ModelBase):
