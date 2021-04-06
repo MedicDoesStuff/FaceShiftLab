@@ -448,11 +448,11 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                     elif 'liae' in archi_type:
                         if self.options['grow']:
                             gpu_src_code_prev = self.encoder_prev(nn.resize2d_area(gpu_warped_src, size=-2))
-                            gpu_src_code_next = self.encoder(self.encoder_block_0(gpu_warped_src))
+                            gpu_src_code_next = self.encoder_block_0(self.encoder(gpu_warped_src))
                             gpu_src_code = self.alpha * gpu_src_code_next + (1 - self.alpha) * gpu_src_code_prev
 
                             gpu_dst_code_prev = self.encoder_prev(nn.resize2d_area(gpu_warped_dst, size=-2))
-                            gpu_dst_code_next = self.encoder(self.encoder_block_0(gpu_warped_dst))
+                            gpu_dst_code_next = self.encoder_block_0(self.encoder(gpu_warped_dst))
                             gpu_dst_code = self.alpha * gpu_dst_code_next + (1 - self.alpha) * gpu_dst_code_prev
                         else:
                             gpu_src_code = self.encoder (gpu_warped_src)
