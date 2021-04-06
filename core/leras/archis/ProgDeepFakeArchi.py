@@ -111,8 +111,12 @@ class ProgDeepFakeArchi(nn.ArchiBase):
                     return self.out_ch
 
             class EncoderBlock0(nn.ModelBase):
-                def on_build(self, e_ch, kernel_size=5):
-                    self.down = Downscale(e_ch*4, e_ch*8, kernel_size=kernel_size)
+                def __init__(self, e_ch, **kwargs ):
+                    self.e_ch = e_ch
+                    super().__init__(**kwargs)
+
+                def on_build(self):
+                    self.down = Downscale(self.e_ch*4, self.e_ch*8, kernel_size=5)
 
                 def forward(self, inp):
                     return nn.flatten(self.down(inp))
