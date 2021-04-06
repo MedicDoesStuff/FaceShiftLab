@@ -203,9 +203,10 @@ class SampleProcessor(object):
                             mat = LandmarksProcessor.get_transform_mat (sample_landmarks, resolution, face_type)
                             img = cv2.warpAffine( img, mat, (resolution,resolution), borderMode=borderMode, flags=cv2.INTER_CUBIC )
                         else:
-                            if w != resolution:
+                            if w < resolution:
                                 img = cv2.resize( img, (resolution, resolution), interpolation=cv2.INTER_CUBIC )
-
+                            elif w > resolution:
+                                img = cv2.resize( img, (resolution, resolution), interpolation=cv2.INTER_AREA )
                         # Apply random color transfer
                         if ct_mode is not None and ct_sample is not None or ct_mode == 'fs-aug':
                             if ct_mode == 'fs-aug':
@@ -213,7 +214,7 @@ class SampleProcessor(object):
                             else:
                                 if ct_sample_bgr is None:
                                     ct_sample_bgr = ct_sample.load_bgr()
-                                img = imagelib.color_transfer (ct_mode, img, cv2.resize( ct_sample_bgr, (resolution,resolution), interpolation=cv2.INTER_LINEAR ) )
+                                img = imagelib.color_transfer (ct_mode, img, cv2.resize( ct_sample_bgr, (resolution,resolution), interpolation=cv2.INTER_AREA ) )
 
 
                         img  = imagelib.warp_by_params (params_per_resolution[resolution], img,  warp, transform, can_flip=True, border_replicate=border_replicate)
