@@ -93,10 +93,6 @@ def create_flask_app(s2c, c2s, s2flask, kwargs):
     def test_disconnect():
         print('Client disconnected')
 
-    @socketio.on_error_default  # handles all namespaces without an explicit error handler
-    def default_error_handler(e):
-        pass
-
     return socketio, app
 
 
