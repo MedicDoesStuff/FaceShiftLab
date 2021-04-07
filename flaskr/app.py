@@ -83,7 +83,7 @@ def create_flask_app(s2c, c2s, s2flask, kwargs):
     def preview_image():
         return send_file(preview_file, mimetype='image/png', cache_timeout=-1)
 
-    socketio = SocketIO(app, engineio_logger=True)
+    socketio = SocketIO(app)
 
     @socketio.on('connect', namespace='/')
     def test_connect():
@@ -92,6 +92,10 @@ def create_flask_app(s2c, c2s, s2flask, kwargs):
     @socketio.on('disconnect', namespace='/test')
     def test_disconnect():
         print('Client disconnected')
+
+    @socketio.on_error_default  # handles all namespaces without an explicit error handler
+    def default_error_handler(e):
+        pass
 
     return socketio, app
 
