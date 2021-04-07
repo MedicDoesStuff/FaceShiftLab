@@ -913,12 +913,15 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
 
 
             def AE_view(warped_src, warped_dst, alpha):
-                return nn.tf_sess.run ( [pred_src_src_prev, pred_src_srcm_prev, pred_dst_dst_prev, pred_dst_dstm_prev, pred_src_dst_prev, pred_src_dstm_prev,
-                                         pred_src_src_next, pred_src_srcm_next, pred_dst_dst_next, pred_dst_dstm_next, pred_src_dst_next, pred_src_dstm_next,
-                                         pred_src_src, pred_src_srcm, pred_dst_dst, pred_dst_dstm, pred_src_dst, pred_src_dstm],
-                                            feed_dict={self.warped_src:warped_src,
-                                                    self.warped_dst:warped_dst,
-                                                       self.alpha: alpha})
+                if self.options['grow']:
+                    outputs = [pred_src_src_prev, pred_src_srcm_prev, pred_dst_dst_prev, pred_dst_dstm_prev, pred_src_dst_prev, pred_src_dstm_prev,
+                               pred_src_src_next, pred_src_srcm_next, pred_dst_dst_next, pred_dst_dstm_next, pred_src_dst_next, pred_src_dstm_next,
+                               pred_src_src, pred_src_srcm, pred_dst_dst, pred_dst_dstm, pred_src_dst, pred_src_dstm]
+                else:
+                    outputs = [pred_src_src, pred_src_srcm, pred_dst_dst, pred_dst_dstm, pred_src_dst, pred_src_dstm]
+                return nn.tf_sess.run (outputs, feed_dict={self.warped_src:warped_src,
+                                                           self.warped_dst:warped_dst,
+                                                           self.alpha: alpha})
             self.AE_view = AE_view
         else:
             # Initializing merge function
@@ -1075,10 +1078,14 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
         ( (warped_src, target_src, target_srcm, target_srcm_em),
           (warped_dst, target_dst, target_dstm, target_dstm_em) ) = samples
 
-        S, D, SSP, SSMP, DDP, DDMP, SDP, SDMP,\
-        SSN, SSMN, DDN, DDMN, SDN, SDMN,\
-        SS, SSM, DD, DDM, SD, SDM = [ np.clip( nn.to_data_format(x,"NHWC", self.model_data_format), 0.0, 1.0) for x in ([target_src,target_dst] + self.AE_view (target_src, target_dst, self.grow_alpha ) ) ]
-        SSMP, DDMP, SDMP, SSMN, DDMN, SDMN, SSM, DDM, SDM, = [ np.repeat (x, (3,), -1) for x in [SSMP, DDMP, SDMP, SSMN, DDMN, SDMN, SSM, DDM, SDM] ]
+        if self.options['grow']:
+            S, D, SSP, SSMP, DDP, DDMP, SDP, SDMP,\
+            SSN, SSMN, DDN, DDMN, SDN, SDMN,\
+            SS, SSM, DD, DDM, SD, SDM = [ np.clip( nn.to_data_format(x,"NHWC", self.model_data_format), 0.0, 1.0) for x in ([target_src,target_dst] + self.AE_view (target_src, target_dst, self.grow_alpha ) ) ]
+            SSMP, DDMP, SDMP, SSMN, DDMN, SDMN, SSM, DDM, SDM, = [ np.repeat (x, (3,), -1) for x in [SSMP, DDMP, SDMP, SSMN, DDMN, SDMN, SSM, DDM, SDM] ]
+        else:
+            S, D, SS, SSM, DD, DDM, SD, SDM = [ np.clip( nn.to_data_format(x,"NHWC", self.model_data_format), 0.0, 1.0) for x in ([target_src,target_dst] + self.AE_view (target_src, target_dst, self.grow_alpha ) ) ]
+            SSM, DDM, SDM, = [ np.repeat (x, (3,), -1) for x in [SSM, DDM, SDM] ]
 
         target_srcm, target_dstm = [ nn.to_data_format(x,"NHWC", self.model_data_format) for x in ([target_srcm, target_dstm] )]
 
