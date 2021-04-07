@@ -37,6 +37,10 @@
           $.post("{{ url_for('update') }}");
         }
 
+        function prev_preview() {
+          $.post("{{ url_for('prev_preview') }}");
+        }
+
         function next_preview() {
           $.post("{{ url_for('next_preview') }}");
         }
@@ -58,6 +62,7 @@
             case "s"     : save(); break;
             case "Enter" : exit(); break;
             case "p"     : update(); break;
+            case "b"     : prev_preview(); break;
             case " "     : next_preview(); break;
             case "l"     : change_history_range(); break;
             case "-"     : zoom_prev(); break;
@@ -69,6 +74,7 @@
         $('button#save').click(save);
         $('button#exit').click(exit);
         $('button#update').click(update);
+        $('button#prev_preview').click(prev_preview);
         $('button#next_preview').click(next_preview);
         $('button#change_history_range').click(change_history_range);
         $('button#zoom_prev').click(zoom_prev);
@@ -85,6 +91,7 @@
     <button class='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect' id='save'>Save</button>
     <button class='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect' id='exit'>Exit</button>
     <button class='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect' id='update'>Update</button>
+    <button class='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect' id='prev_preview'>Prev preview</button>
     <button class='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect' id='next_preview'>Next preview</button>
     <button class='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect' id='change_history_range'>Change History Range</button>
     <button class='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect' id='zoom_prev'>Zoom -</button>

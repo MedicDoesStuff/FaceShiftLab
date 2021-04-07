@@ -51,6 +51,11 @@ def create_flask_app(s2c, c2s, s2flask, kwargs):
         send(c2s, 'update')
         return '', 204
 
+    @app.route('/prev_preview', methods=['POST'])
+    def prev_preview():
+        send(c2s, 'prev_preview')
+        return '', 204
+
     @app.route('/next_preview', methods=['POST'])
     def next_preview():
         send(c2s, 'next_preview')

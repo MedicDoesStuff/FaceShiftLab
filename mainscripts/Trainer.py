@@ -367,6 +367,9 @@ def main(**kwargs):
                     if not is_waiting_preview:
                         is_waiting_preview = True
                     s2c.put({'op': 'preview'})
+                elif op == 'prev_preview':
+                    selected_preview = (selected_preview - 1) % len(previews)
+                    update_preview = True
                 elif op == 'next_preview':
                     selected_preview = (selected_preview + 1) % len(previews)
                     update_preview = True
