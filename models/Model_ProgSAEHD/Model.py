@@ -1092,6 +1092,18 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                 st.append ( np.concatenate ( ar, axis=1) )
             result += [ (f'ProgSAEHD - Alpha: {self.grow_alpha:0.4f}', np.concatenate (st, axis=0 )), ]
 
+            if self.options['grow']:
+                stp = []
+                for i in range(n_samples):
+                    ar = S[i], SSP[i], D[i], DDP[i], SDP[i]
+                    stp.append ( np.concatenate ( ar, axis=1) )
+                result += [ (f'ProgSAEHD prev layer - Alpha: {self.grow_alpha:0.4f}', np.concatenate (stp, axis=0 )), ]
+
+                stn = []
+                for i in range(n_samples):
+                    ar = S[i], SSN[i], D[i], DDN[i], SDN[i]
+                    stn.append ( np.concatenate ( ar, axis=1) )
+                result += [ (f'ProgSAEHD next layer - Alpha: {self.grow_alpha:0.4f}', np.concatenate (stn, axis=0 )), ]
 
             st_m = []
             for i in range(n_samples):
@@ -1103,13 +1115,6 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
             result += [ (f'ProgSAEHD masked - Alpha: {self.grow_alpha:0.4f}', np.concatenate (st_m, axis=0 )), ]
 
             if self.options['grow']:
-                stp = []
-                for i in range(n_samples):
-                    ar = S[i], SSP[i], D[i], DDP[i], SDP[i]
-                    stp.append ( np.concatenate ( ar, axis=1) )
-                result += [ (f'ProgSAEHD prev layer - Alpha: {self.grow_alpha:0.4f}', np.concatenate (stp, axis=0 )), ]
-
-
                 st_mp = []
                 for i in range(n_samples):
                     SD_mask = DDMP[i]*SDMP[i] if self.face_type < FaceType.HEAD else SDMP[i]
@@ -1118,13 +1123,6 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                     st_mp.append ( np.concatenate ( ar, axis=1) )
 
                 result += [ (f'ProgSAEHD prev masked - Alpha: {self.grow_alpha:0.4f}', np.concatenate (st_mp, axis=0 )), ]
-
-                stn = []
-                for i in range(n_samples):
-                    ar = S[i], SSN[i], D[i], DDN[i], SDN[i]
-                    stn.append ( np.concatenate ( ar, axis=1) )
-                result += [ (f'ProgSAEHD next layer - Alpha: {self.grow_alpha:0.4f}', np.concatenate (stn, axis=0 )), ]
-
 
                 st_mn = []
                 for i in range(n_samples):
