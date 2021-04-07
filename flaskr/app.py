@@ -83,7 +83,7 @@ def create_flask_app(s2c, c2s, s2flask, kwargs):
     def preview_image():
         return send_file(preview_file, mimetype='image/png', cache_timeout=-1)
 
-    socketio = SocketIO(app)
+    socketio = SocketIO(app, engineio_logger=True)
 
     @socketio.on('connect', namespace='/')
     def test_connect():
