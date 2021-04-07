@@ -472,6 +472,20 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
 
 
             # Compute losses per GPU
+            gpu_pred_src_src_prev_list = []
+            gpu_pred_dst_dst_prev_list = []
+            gpu_pred_src_dst_prev_list = []
+            gpu_pred_src_srcm_prev_list = []
+            gpu_pred_dst_dstm_prev_list = []
+            gpu_pred_src_dstm_prev_list = []
+
+            gpu_pred_src_src_next_list = []
+            gpu_pred_dst_dst_next_list = []
+            gpu_pred_src_dst_next_list = []
+            gpu_pred_src_srcm_next_list = []
+            gpu_pred_dst_dstm_next_list = []
+            gpu_pred_src_dstm_next_list = []
+
             gpu_pred_src_src_list = []
             gpu_pred_dst_dst_list = []
             gpu_pred_src_dst_list = []
@@ -615,6 +629,23 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                             gpu_pred_dst_dstm = self.alpha * gpu_pred_dst_dstm_next + (1-self.alpha) * gpu_pred_dst_dstm_prev
                             gpu_pred_src_dst = self.alpha * gpu_pred_src_dst_next + (1-self.alpha) * gpu_pred_src_dst_prev
                             gpu_pred_src_dstm = self.alpha * gpu_pred_src_dstm_next + (1-self.alpha) * gpu_pred_src_dstm_prev
+
+                    if self.options['grow']:
+                        gpu_pred_src_src_prev_list.append(gpu_pred_src_src_prev)
+                        gpu_pred_dst_dst_prev_list.append(gpu_pred_dst_dst_prev)
+                        gpu_pred_src_dst_prev_list.append(gpu_pred_src_dst_prev)
+
+                        gpu_pred_src_srcm_prev_list.append(gpu_pred_src_srcm_prev)
+                        gpu_pred_dst_dstm_prev_list.append(gpu_pred_dst_dstm_prev)
+                        gpu_pred_src_dstm_prev_list.append(gpu_pred_src_dstm_prev)
+
+                        gpu_pred_src_src_next_list.append(gpu_pred_src_src_next)
+                        gpu_pred_dst_dst_next_list.append(gpu_pred_dst_dst_next)
+                        gpu_pred_src_dst_next_list.append(gpu_pred_src_dst_next)
+
+                        gpu_pred_src_srcm_next_list.append(gpu_pred_src_srcm_next)
+                        gpu_pred_dst_dstm_next_list.append(gpu_pred_dst_dstm_next)
+                        gpu_pred_src_dstm_next_list.append(gpu_pred_src_dstm_next)
 
                     gpu_pred_src_src_list.append(gpu_pred_src_src)
                     gpu_pred_dst_dst_list.append(gpu_pred_dst_dst)
@@ -808,6 +839,20 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
 
             # Average losses and gradients, and create optimizer update ops
             with tf.device(f'/CPU:0'):
+                pred_src_src_prev  = nn.concat(gpu_pred_src_src_prev_list, 0)
+                pred_dst_dst_prev  = nn.concat(gpu_pred_dst_dst_prev_list, 0)
+                pred_src_dst_prev  = nn.concat(gpu_pred_src_dst_prev_list, 0)
+                pred_src_srcm_prev = nn.concat(gpu_pred_src_srcm_prev_list, 0)
+                pred_dst_dstm_prev = nn.concat(gpu_pred_dst_dstm_prev_list, 0)
+                pred_src_dstm_prev = nn.concat(gpu_pred_src_dstm_prev_list, 0)
+
+                pred_src_src_next  = nn.concat(gpu_pred_src_src_next_list, 0)
+                pred_dst_dst_next  = nn.concat(gpu_pred_dst_dst_next_list, 0)
+                pred_src_dst_next  = nn.concat(gpu_pred_src_dst_next_list, 0)
+                pred_src_srcm_next = nn.concat(gpu_pred_src_srcm_next_list, 0)
+                pred_dst_dstm_next = nn.concat(gpu_pred_dst_dstm_next_list, 0)
+                pred_src_dstm_next = nn.concat(gpu_pred_src_dstm_next_list, 0)
+
                 pred_src_src  = nn.concat(gpu_pred_src_src_list, 0)
                 pred_dst_dst  = nn.concat(gpu_pred_dst_dst_list, 0)
                 pred_src_dst  = nn.concat(gpu_pred_src_dst_list, 0)
@@ -867,7 +912,9 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
 
 
             def AE_view(warped_src, warped_dst, alpha):
-                return nn.tf_sess.run ( [pred_src_src, pred_src_srcm, pred_dst_dst, pred_dst_dstm, pred_src_dst, pred_src_dstm],
+                return nn.tf_sess.run ( [pred_src_src_prev, pred_src_srcm_prev, pred_dst_dst_prev, pred_dst_dstm_prev, pred_src_dst_prev, pred_src_dstm_prev,
+                                         pred_src_src_next, pred_src_srcm_next, pred_dst_dst_next, pred_dst_dstm_next, pred_src_dst_next, pred_src_dstm_next,
+                                         pred_src_src, pred_src_srcm, pred_dst_dst, pred_dst_dstm, pred_src_dst, pred_src_dstm],
                                             feed_dict={self.warped_src:warped_src,
                                                     self.warped_dst:warped_dst,
                                                        self.alpha: alpha})
@@ -1027,8 +1074,10 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
         ( (warped_src, target_src, target_srcm, target_srcm_em),
           (warped_dst, target_dst, target_dstm, target_dstm_em) ) = samples
 
-        S, D, SS, SSM, DD, DDM, SD, SDM = [ np.clip( nn.to_data_format(x,"NHWC", self.model_data_format), 0.0, 1.0) for x in ([target_src,target_dst] + self.AE_view (target_src, target_dst, self.grow_alpha ) ) ]
-        SSM, DDM, SDM, = [ np.repeat (x, (3,), -1) for x in [SSM, DDM, SDM] ]
+        S, D, SSP, SSMP, DDP, DDMP, SDP, SDMP,\
+        SSN, SSMN, DDN, DDMN, SDN, SDMN,\
+        SS, SSM, DD, DDM, SD, SDM = [ np.clip( nn.to_data_format(x,"NHWC", self.model_data_format), 0.0, 1.0) for x in ([target_src,target_dst] + self.AE_view (target_src, target_dst, self.grow_alpha ) ) ]
+        SSMP, DDMP, SDMP, SSMN, DDMN, SDMN, SSM, DDM, SDM, = [ np.repeat (x, (3,), -1) for x in [SSMP, DDMP, SDMP, SSMN, DDMN, SDMN, SSM, DDM, SDM] ]
 
         target_srcm, target_dstm = [ nn.to_data_format(x,"NHWC", self.model_data_format) for x in ([target_srcm, target_dstm] )]
 
@@ -1052,6 +1101,40 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                 st_m.append ( np.concatenate ( ar, axis=1) )
 
             result += [ (f'ProgSAEHD masked - Alpha: {self.grow_alpha:0.4f}', np.concatenate (st_m, axis=0 )), ]
+
+            if self.options['grow']:
+                stp = []
+                for i in range(n_samples):
+                    ar = S[i], SSP[i], D[i], DDP[i], SDP[i]
+                    stp.append ( np.concatenate ( ar, axis=1) )
+                result += [ (f'ProgSAEHD prev layer - Alpha: {self.grow_alpha:0.4f}', np.concatenate (stp, axis=0 )), ]
+
+
+                st_mp = []
+                for i in range(n_samples):
+                    SD_mask = DDMP[i]*SDMP[i] if self.face_type < FaceType.HEAD else SDMP[i]
+
+                    ar = S[i]*target_srcm[i], SSP[i]*SSMP[i], D[i]*target_dstm[i], DDP[i]*DDMP[i], SDP[i]*SD_mask
+                    st_mp.append ( np.concatenate ( ar, axis=1) )
+
+                result += [ (f'ProgSAEHD prev masked - Alpha: {self.grow_alpha:0.4f}', np.concatenate (st_mp, axis=0 )), ]
+
+                stn = []
+                for i in range(n_samples):
+                    ar = S[i], SSN[i], D[i], DDN[i], SDN[i]
+                    stn.append ( np.concatenate ( ar, axis=1) )
+                result += [ (f'ProgSAEHD next layer - Alpha: {self.grow_alpha:0.4f}', np.concatenate (stn, axis=0 )), ]
+
+
+                st_mn = []
+                for i in range(n_samples):
+                    SD_mask = DDMN[i]*SDMN[i] if self.face_type < FaceType.HEAD else SDMN[i]
+
+                    ar = S[i]*target_srcm[i], SSN[i]*SSMN[i], D[i]*target_dstm[i], DDN[i]*DDMN[i], SDN[i]*SD_mask
+                    st_mn.append ( np.concatenate ( ar, axis=1) )
+
+                result += [ (f'ProgSAEHD next masked - Alpha: {self.grow_alpha:0.4f}', np.concatenate (st_mn, axis=0 )), ]
+
         else:
             result = []
 
