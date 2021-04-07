@@ -839,19 +839,20 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
 
             # Average losses and gradients, and create optimizer update ops
             with tf.device(f'/CPU:0'):
-                pred_src_src_prev  = nn.concat(gpu_pred_src_src_prev_list, 0)
-                pred_dst_dst_prev  = nn.concat(gpu_pred_dst_dst_prev_list, 0)
-                pred_src_dst_prev  = nn.concat(gpu_pred_src_dst_prev_list, 0)
-                pred_src_srcm_prev = nn.concat(gpu_pred_src_srcm_prev_list, 0)
-                pred_dst_dstm_prev = nn.concat(gpu_pred_dst_dstm_prev_list, 0)
-                pred_src_dstm_prev = nn.concat(gpu_pred_src_dstm_prev_list, 0)
+                if self.options['grow']:
+                    pred_src_src_prev  = nn.concat(gpu_pred_src_src_prev_list, 0)
+                    pred_dst_dst_prev  = nn.concat(gpu_pred_dst_dst_prev_list, 0)
+                    pred_src_dst_prev  = nn.concat(gpu_pred_src_dst_prev_list, 0)
+                    pred_src_srcm_prev = nn.concat(gpu_pred_src_srcm_prev_list, 0)
+                    pred_dst_dstm_prev = nn.concat(gpu_pred_dst_dstm_prev_list, 0)
+                    pred_src_dstm_prev = nn.concat(gpu_pred_src_dstm_prev_list, 0)
 
-                pred_src_src_next  = nn.concat(gpu_pred_src_src_next_list, 0)
-                pred_dst_dst_next  = nn.concat(gpu_pred_dst_dst_next_list, 0)
-                pred_src_dst_next  = nn.concat(gpu_pred_src_dst_next_list, 0)
-                pred_src_srcm_next = nn.concat(gpu_pred_src_srcm_next_list, 0)
-                pred_dst_dstm_next = nn.concat(gpu_pred_dst_dstm_next_list, 0)
-                pred_src_dstm_next = nn.concat(gpu_pred_src_dstm_next_list, 0)
+                    pred_src_src_next  = nn.concat(gpu_pred_src_src_next_list, 0)
+                    pred_dst_dst_next  = nn.concat(gpu_pred_dst_dst_next_list, 0)
+                    pred_src_dst_next  = nn.concat(gpu_pred_src_dst_next_list, 0)
+                    pred_src_srcm_next = nn.concat(gpu_pred_src_srcm_next_list, 0)
+                    pred_dst_dstm_next = nn.concat(gpu_pred_dst_dstm_next_list, 0)
+                    pred_src_dstm_next = nn.concat(gpu_pred_src_dstm_next_list, 0)
 
                 pred_src_src  = nn.concat(gpu_pred_src_src_list, 0)
                 pred_dst_dst  = nn.concat(gpu_pred_dst_dst_list, 0)
