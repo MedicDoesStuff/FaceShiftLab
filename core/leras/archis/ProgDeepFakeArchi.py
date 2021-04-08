@@ -141,7 +141,7 @@ class ProgDeepFakeArchi(nn.ArchiBase):
 
                 def forward(self, inp):
                     x = self.down(inp)
-                    return nn.flatten(x)
+                    return x
 
             class EncoderBlock0(nn.ModelBase):
                 def __init__(self, e_ch, **kwargs ):
