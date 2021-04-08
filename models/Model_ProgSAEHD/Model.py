@@ -383,13 +383,13 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                                                  [self.decoder, 'to_rgb_1.npy'],
                                                  [self.decoder_mask, 'to_mask_1']]
                 elif self.options['scale'] == 1 and self.options['grow']:
-                    self.decoder_prev = model_archi.ToRgb1(in_ch=inters_out_ch, name='to_rgb_1')
+                    self.decoder_prev = model_archi.ToRgb1(in_ch=d_dims*8, name='to_rgb_1')
                     self.decoder_mask_prev = model_archi.ToMask1(in_ch_m=d_mask_dims*8, name='to_mask_1')
                     self.decoder_block_0 = model_archi.DecoderBlock0(in_ch=inters_out_ch, d_ch=d_dims, d_mask_ch=d_mask_dims, name='decoder_block_0')
                     self.decoder_block_1 = model_archi.DecoderBlock1(in_ch=inters_out_ch, d_ch=d_dims, name='decoder_block_1')
                     self.decoder_mask_block_1 = model_archi.DecoderMaskBlock1(in_ch=inters_out_ch, d_mask_ch=d_mask_dims, name='decoder_mask_block_1')
-                    self.decoder = model_archi.ToRgb2(in_ch=d_dims*8, name='to_rgb_2')
-                    self.decoder_mask = model_archi.ToMask2(in_ch_m=d_mask_dims*8, name='to_mask_2')
+                    self.decoder = model_archi.ToRgb2(in_ch=d_dims*4, name='to_rgb_2')
+                    self.decoder_mask = model_archi.ToMask2(in_ch_m=d_mask_dims*4, name='to_mask_2')
                     self.model_filename_list += [[self.decoder_prev, 'to_rgb_1.npy'],
                                                  [self.decoder_mask_prev, 'to_mask_1.npy'],
                                                  [self.decoder_block_0, 'decoder_block_0.npy'],
@@ -401,8 +401,8 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                     self.decoder_block_0 = model_archi.DecoderBlock0(in_ch=inters_out_ch, d_ch=d_dims, d_mask_ch=d_mask_dims, name='decoder_block_0')
                     self.decoder_block_1 = model_archi.DecoderBlock1(in_ch=inters_out_ch, d_ch=d_dims, name='decoder_block_1')
                     self.decoder_mask_block_1 = model_archi.DecoderMaskBlock1(in_ch=inters_out_ch, d_mask_ch=d_mask_dims, name='decoder_mask_block_1')
-                    self.decoder = model_archi.ToRgb2(in_ch=d_dims*8, name='to_rgb_2')
-                    self.decoder_mask = model_archi.ToMask2(in_ch_m=d_mask_dims*8, name='to_mask_2')
+                    self.decoder = model_archi.ToRgb2(in_ch=d_dims*4, name='to_rgb_2')
+                    self.decoder_mask = model_archi.ToMask2(in_ch_m=d_mask_dims*4, name='to_mask_2')
                     self.model_filename_list += [[self.decoder_block_0, 'decoder_block_0.npy'],
                                                  [self.decoder_block_1, 'decoder_block_1.npy'],
                                                  [self.decoder_mask_block_1, 'decoder_mask_block_1.npy'],
