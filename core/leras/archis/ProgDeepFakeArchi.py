@@ -266,8 +266,8 @@ class ProgDeepFakeArchi(nn.ArchiBase):
                     return x, m
 
             class DecoderBlock1(nn.ModelBase):
-                def on_build(self, in_ch, d_ch ):
-                    self.upscale0 = Upscale(in_ch, d_ch*4, kernel_size=3)
+                def on_build(self, d_ch ):
+                    self.upscale0 = Upscale(d_ch*8, d_ch*4, kernel_size=3)
                     self.res0 = ResidualBlock(d_ch*4, kernel_size=3)
 
                 def forward(self, inp):
@@ -277,8 +277,8 @@ class ProgDeepFakeArchi(nn.ArchiBase):
                     return x
 
             class DecoderMaskBlock1(nn.ModelBase):
-                def on_build(self, in_ch, d_mask_ch ):
-                    self.upscalem0 = Upscale(in_ch, d_mask_ch*8, kernel_size=3)
+                def on_build(self, d_mask_ch ):
+                    self.upscalem0 = Upscale(d_mask_ch*8, d_mask_ch*4, kernel_size=3)
 
                 def forward(self, inp):
                     m = self.upscalem0(inp)
