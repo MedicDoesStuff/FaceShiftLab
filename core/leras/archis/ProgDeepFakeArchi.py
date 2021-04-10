@@ -131,6 +131,38 @@ class ProgDeepFakeArchi(nn.ArchiBase):
                 def get_out_ch(self):
                     return self.out_ch
 
+            class FromRgb3(nn.ModelBase):
+                def __init__(self, in_ch, e_ch, **kwargs ):
+                    self.in_ch = in_ch
+                    self.out_ch = e_ch
+                    super().__init__(**kwargs)
+
+                def on_build(self):
+                    self.conv = nn.Conv2D(self.in_ch, self.out_ch, kernel_size=1, padding='SAME')
+
+                def forward(self, inp):
+                    x = self.conv(inp)
+                    x = tf.nn.leaky_relu(x, 0.1)
+                    return x
+
+                def get_out_res(self, res):
+                    return res
+
+                def get_out_ch(self):
+                    return self.out_ch
+
+            class EncoderBlock2(nn.ModelBase):
+                def __init__(self, e_ch, **kwargs ):
+                    self.e_ch = e_ch
+                    super().__init__(**kwargs)
+
+                def on_build(self):
+                    self.down = Downscale(self.e_ch, self.e_ch*2, kernel_size=5)
+
+                def forward(self, inp):
+                    x = self.down(inp)
+                    return x
+
             class EncoderBlock1(nn.ModelBase):
                 def __init__(self, e_ch, **kwargs ):
                     self.e_ch = e_ch
@@ -234,6 +266,15 @@ class ProgDeepFakeArchi(nn.ArchiBase):
                     x = tf.nn.sigmoid(self.out_conv(x))
                     return x
 
+            class ToRgb3(nn.ModelBase):
+                def on_build(self, in_ch ):
+                    self.out_conv  = nn.Conv2D( in_ch, 3, kernel_size=1, padding='SAME')
+
+
+                def forward(self, x):
+                    x = tf.nn.sigmoid(self.out_conv(x))
+                    return x
+
             class ToMask1(nn.ModelBase):
                 def on_build(self, in_ch_m ):
                     self.out_convm = nn.Conv2D( in_ch_m, 1, kernel_size=1, padding='SAME')
@@ -244,6 +285,15 @@ class ProgDeepFakeArchi(nn.ArchiBase):
                     return m
 
             class ToMask2(nn.ModelBase):
+                def on_build(self, in_ch_m ):
+                    self.out_convm = nn.Conv2D( in_ch_m, 1, kernel_size=1, padding='SAME')
+
+
+                def forward(self, m):
+                    m = tf.nn.sigmoid(self.out_convm(m))
+                    return m
+
+            class ToMask3(nn.ModelBase):
                 def on_build(self, in_ch_m ):
                     self.out_convm = nn.Conv2D( in_ch_m, 1, kernel_size=1, padding='SAME')
 
@@ -276,12 +326,32 @@ class ProgDeepFakeArchi(nn.ArchiBase):
 
                     return x
 
+            class DecoderBlock2(nn.ModelBase):
+                def on_build(self, d_ch ):
+                    self.upscale2 = Upscale(d_ch*4, d_ch*2, kernel_size=3)
+                    self.res2 = ResidualBlock(d_ch*2, kernel_size=3)
+
+                def forward(self, inp):
+                    x = self.upscale2(inp)
+                    x = self.res2(x)
+
+                    return x
+
             class DecoderMaskBlock1(nn.ModelBase):
                 def on_build(self, d_mask_ch ):
                     self.upscalem0 = Upscale(d_mask_ch*8, d_mask_ch*4, kernel_size=3)
 
                 def forward(self, inp):
                     m = self.upscalem0(inp)
+
+                    return m
+
+            class DecoderMaskBlock2(nn.ModelBase):
+                def on_build(self, d_mask_ch ):
+                    self.upscalem2 = Upscale(d_mask_ch*4, d_mask_ch*2, kernel_size=3)
+
+                def forward(self, inp):
+                    m = self.upscalem2(inp)
 
                     return m
 
@@ -377,12 +447,17 @@ class ProgDeepFakeArchi(nn.ArchiBase):
         self.ToRgb0 = ToRgb0
         self.ToRgb1 = ToRgb1
         self.ToRgb2 = ToRgb2
+        self.ToRgb3 = ToRgb3
         self.ToMask1 = ToMask1
         self.ToMask2 = ToMask2
+        self.ToMask3 = ToMask3
         self.EncoderBlock0 = EncoderBlock0
         self.EncoderBlock1 = EncoderBlock1
+        self.EncoderBlock2 = EncoderBlock2
         self.DecoderBlock0 = DecoderBlock0
         self.DecoderBlock1 = DecoderBlock1
         self.DecoderMaskBlock1 = DecoderMaskBlock1
+        self.DecoderBlock2 = DecoderBlock2
+        self.DecoderMaskBlock2 = DecoderMaskBlock2
 
 nn.ProgDeepFakeArchi = ProgDeepFakeArchi
