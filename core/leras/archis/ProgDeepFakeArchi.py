@@ -444,6 +444,7 @@ class ProgDeepFakeArchi(nn.ArchiBase):
         self.FromRgb0 = FromRgb0
         self.FromRgb1 = FromRgb1
         self.FromRgb2 = FromRgb2
+        self.FromRgb3 = FromRgb3
         self.ToRgb0 = ToRgb0
         self.ToRgb1 = ToRgb1
         self.ToRgb2 = ToRgb2
