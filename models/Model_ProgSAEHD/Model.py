@@ -374,6 +374,30 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                                                  [self.encoder_block_1, 'encoder_block_1'],
                                                  [self.encoder_block_2, 'encoder_block_2'],
                                                  [self.encoder, 'from_rgb_3.npy']]
+                elif self.options['scale'] == 3 and self.options['grow']:
+                    self.encoder_prev = model_archi.FromRgb3(in_ch=input_ch, e_ch=e_dims, name='from_rgb_3')
+                    self.encoder_block_0 = model_archi.EncoderBlock0(e_ch=e_dims, name='encoder_block_0')
+                    self.encoder_block_1 = model_archi.EncoderBlock1(e_ch=e_dims, name='encoder_block_1')
+                    self.encoder_block_2 = model_archi.EncoderBlock2(e_ch=e_dims, name='encoder_block_2')
+                    self.encoder_block_3 = model_archi.EncoderBlock3(e_ch=e_dims, name='encoder_block_3')
+                    self.encoder = model_archi.FromRgb4(in_ch=input_ch, e_ch=e_dims, name='from_rgb_4')
+                    self.model_filename_list += [[self.encoder_prev, 'from_rgb_3.npy'],
+                                                 [self.encoder_block_0, 'encoder_block_0'],
+                                                 [self.encoder_block_1, 'encoder_block_1'],
+                                                 [self.encoder_block_2, 'encoder_block_2'],
+                                                 [self.encoder_block_3, 'encoder_block_3'],
+                                                 [self.encoder, 'from_rgb_4.npy']]
+                elif self.options['scale'] == 4 and not self.options['grow']:
+                    self.encoder_block_0 = model_archi.EncoderBlock0(e_ch=e_dims, name='encoder_block_0')
+                    self.encoder_block_1 = model_archi.EncoderBlock1(e_ch=e_dims, name='encoder_block_1')
+                    self.encoder_block_2 = model_archi.EncoderBlock2(e_ch=e_dims, name='encoder_block_2')
+                    self.encoder_block_3 = model_archi.EncoderBlock3(e_ch=e_dims, name='encoder_block_3')
+                    self.encoder = model_archi.FromRgb4(in_ch=input_ch, e_ch=e_dims, name='from_rgb_4')
+                    self.model_filename_list += [[self.encoder_block_0, 'encoder_block_0'],
+                                                 [self.encoder_block_1, 'encoder_block_1'],
+                                                 [self.encoder_block_2, 'encoder_block_2'],
+                                                 [self.encoder_block_3, 'encoder_block_3'],
+                                                 [self.encoder, 'from_rgb_4.npy']]
 
                 encoder_out_ch = e_dims * 2**3 * (self.options['final_resolution'] // 2**4)**2
                 self.inter_AB = model_archi.Inter(in_ch=encoder_out_ch, ae_ch=ae_dims, ae_out_ch=ae_dims*2, name='inter_AB')
@@ -462,6 +486,48 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                                                  [self.decoder_mask_block_2, 'decoder_mask_block_2.npy'],
                                                  [self.decoder, 'to_rgb_3.npy'],
                                                  [self.decoder_mask, 'to_mask_3.npy']]
+                elif self.options['scale'] == 3 and self.options['grow']:
+                    self.decoder_prev = model_archi.ToRgb3(in_ch=d_dims*2, name='to_rgb_3')
+                    self.decoder_mask_prev = model_archi.ToMask3(in_ch_m=d_mask_dims*2, name='to_mask_3')
+                    self.decoder_block_0 = model_archi.DecoderBlock0(in_ch=inters_out_ch, d_ch=d_dims, d_mask_ch=d_mask_dims, name='decoder_block_0')
+                    self.decoder_block_1 = model_archi.DecoderBlock1(d_ch=d_dims, name='decoder_block_1')
+                    self.decoder_mask_block_1 = model_archi.DecoderMaskBlock1(d_mask_ch=d_mask_dims, name='decoder_mask_block_1')
+                    self.decoder_block_2 = model_archi.DecoderBlock2(d_ch=d_dims, name='decoder_block_2')
+                    self.decoder_mask_block_2 = model_archi.DecoderMaskBlock2(d_mask_ch=d_mask_dims, name='decoder_mask_block_2')
+                    self.decoder_block_3 = model_archi.DecoderBlock2(d_ch=d_dims, name='decoder_block_3')
+                    self.decoder_mask_block_3 = model_archi.DecoderMaskBlock3(d_mask_ch=d_mask_dims, name='decoder_mask_block_3')
+                    self.decoder = model_archi.ToRgb4(in_ch=d_dims, name='to_rgb_4')
+                    self.decoder_mask = model_archi.ToMask4(in_ch_m=d_mask_dims, name='to_mask_4')
+                    self.model_filename_list += [[self.decoder_prev, 'to_rgb_3.npy'],
+                                                 [self.decoder_mask_prev, 'to_mask_3.npy'],
+                                                 [self.decoder_block_0, 'decoder_block_0.npy'],
+                                                 [self.decoder_block_1, 'decoder_block_1.npy'],
+                                                 [self.decoder_mask_block_1, 'decoder_mask_block_1.npy'],
+                                                 [self.decoder_block_2, 'decoder_block_2.npy'],
+                                                 [self.decoder_mask_block_2, 'decoder_mask_block_2.npy'],
+                                                 [self.decoder_block_3, 'decoder_block_3.npy'],
+                                                 [self.decoder_mask_block_3, 'decoder_mask_block_3.npy'],
+                                                 [self.decoder, 'to_rgb_4.npy'],
+                                                 [self.decoder_mask, 'to_mask_4.npy']]
+                elif self.options['scale'] == 4 and not self.options['grow']:
+                    self.decoder_block_0 = model_archi.DecoderBlock0(in_ch=inters_out_ch, d_ch=d_dims, d_mask_ch=d_mask_dims, name='decoder_block_0')
+                    self.decoder_block_1 = model_archi.DecoderBlock1(d_ch=d_dims, name='decoder_block_1')
+                    self.decoder_mask_block_1 = model_archi.DecoderMaskBlock1(d_mask_ch=d_mask_dims, name='decoder_mask_block_1')
+                    self.decoder_block_2 = model_archi.DecoderBlock2(d_ch=d_dims, name='decoder_block_2')
+                    self.decoder_mask_block_2 = model_archi.DecoderMaskBlock2(d_mask_ch=d_mask_dims, name='decoder_mask_block_2')
+                    self.decoder_block_3 = model_archi.DecoderBlock3(d_ch=d_dims, name='decoder_block_3')
+                    self.decoder_mask_block_3 = model_archi.DecoderMaskBlock3(d_mask_ch=d_mask_dims, name='decoder_mask_block_3')
+                    self.decoder = model_archi.ToRgb4(in_ch=d_dims, name='to_rgb_3')
+                    self.decoder_mask = model_archi.ToMask4(in_ch_m=d_mask_dims, name='to_mask_3')
+                    self.model_filename_list += [[self.decoder_block_0, 'decoder_block_0.npy'],
+                                                 [self.decoder_block_1, 'decoder_block_1.npy'],
+                                                 [self.decoder_mask_block_1, 'decoder_mask_block_1.npy'],
+                                                 [self.decoder_block_2, 'decoder_block_2.npy'],
+                                                 [self.decoder_mask_block_2, 'decoder_mask_block_2.npy'],
+                                                 [self.decoder_block_3, 'decoder_block_3.npy'],
+                                                 [self.decoder_mask_block_3, 'decoder_mask_block_3.npy'],
+                                                 [self.decoder, 'to_rgb_4.npy'],
+                                                 [self.decoder_mask, 'to_mask_4.npy']]
 
 
             if self.is_training:
@@ -556,6 +622,43 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                                                          + self.decoder_mask_block_1.get_weights() \
                                                          + self.decoder_block_2.get_weights() \
                                                          + self.decoder_mask_block_2.get_weights() \
+                                                         + self.decoder.get_weights() \
+                                                         + self.decoder_mask.get_weights()
+                    elif self.options['scale'] == 3 and self.options['grow']:
+                        self.src_dst_trainable_weights = self.encoder_prev.get_weights() \
+                                                         + self.encoder_block_0.get_weights() \
+                                                         + self.encoder_block_1.get_weights() \
+                                                         + self.encoder_block_2.get_weights() \
+                                                         + self.encoder_block_3.get_weights() \
+                                                         + self.encoder.get_weights() \
+                                                         + self.inter_AB.get_weights() \
+                                                         + self.inter_B.get_weights() \
+                                                         + self.decoder_prev.get_weights() \
+                                                         + self.decoder_mask_prev.get_weights() \
+                                                         + self.decoder_block_0.get_weights() \
+                                                         + self.decoder_block_1.get_weights() \
+                                                         + self.decoder_mask_block_1.get_weights() \
+                                                         + self.decoder_block_2.get_weights() \
+                                                         + self.decoder_mask_block_2.get_weights() \
+                                                         + self.decoder_block_3.get_weights() \
+                                                         + self.decoder_mask_block_3.get_weights() \
+                                                         + self.decoder.get_weights() \
+                                                         + self.decoder_mask.get_weights()
+                    elif self.options['scale'] == 4 and not self.options['grow']:
+                        self.src_dst_trainable_weights = self.encoder_block_0.get_weights() \
+                                                         + self.encoder_block_1.get_weights() \
+                                                         + self.encoder_block_2.get_weights() \
+                                                         + self.encoder_block_3.get_weights() \
+                                                         + self.encoder.get_weights() \
+                                                         + self.inter_AB.get_weights() \
+                                                         + self.inter_B.get_weights() \
+                                                         + self.decoder_block_0.get_weights() \
+                                                         + self.decoder_block_1.get_weights() \
+                                                         + self.decoder_mask_block_1.get_weights() \
+                                                         + self.decoder_block_2.get_weights() \
+                                                         + self.decoder_mask_block_2.get_weights() \
+                                                         + self.decoder_block_3.get_weights() \
+                                                         + self.decoder_mask_block_3.get_weights() \
                                                          + self.decoder.get_weights() \
                                                          + self.decoder_mask.get_weights()
 
@@ -672,6 +775,17 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                         elif self.options['scale'] == 3 and not self.options['grow']:
                             gpu_src_code = self.encoder_block_0(self.encoder_block_1(self.encoder_block_2(self.encoder(gpu_warped_src))))
                             gpu_dst_code = self.encoder_block_0(self.encoder_block_1(self.encoder_block_2(self.encoder(gpu_warped_dst))))
+                        elif self.options['scale'] == 3 and self.options['grow']:
+                            gpu_src_code_prev = self.encoder_block_0(self.encoder_block_1(self.encoder_block_2(self.encoder_prev(nn.resize2d_area(gpu_warped_src, size=-2)))))
+                            gpu_src_code_next = self.encoder_block_0(self.encoder_block_1(self.encoder_block_2(self.encoder_block_3(self.encoder(gpu_warped_src)))))
+                            gpu_src_code = self.alpha * gpu_src_code_next + (1 - self.alpha) * gpu_src_code_prev
+
+                            gpu_dst_code_prev = self.encoder_block_0(self.encoder_block_1(self.encoder_block_2(self.encoder_prev(nn.resize2d_area(gpu_warped_dst, size=-2)))))
+                            gpu_dst_code_next = self.encoder_block_0(self.encoder_block_1(self.encoder_block_2(self.encoder_block_3(self.encoder(gpu_warped_dst)))))
+                            gpu_dst_code = self.alpha * gpu_dst_code_next + (1 - self.alpha) * gpu_dst_code_prev
+                        elif self.options['scale'] == 4 and not self.options['grow']:
+                            gpu_src_code = self.encoder_block_0(self.encoder_block_1(self.encoder_block_2(self.encoder_block_3(self.encoder(gpu_warped_src)))))
+                            gpu_dst_code = self.encoder_block_0(self.encoder_block_1(self.encoder_block_2(self.encoder_block_3(self.encoder(gpu_warped_dst)))))
 
                         gpu_src_inter_AB_code = self.inter_AB (gpu_src_code)
                         gpu_src_code = tf.concat([gpu_src_inter_AB_code,gpu_src_inter_AB_code], nn.conv2d_ch_axis  )
@@ -811,6 +925,50 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                             x, m = self.decoder_block_0(gpu_src_dst_code)
                             gpu_pred_src_dst = self.decoder(self.decoder_block_2(self.decoder_block_1(x)))
                             gpu_pred_src_dstm = self.decoder_mask(self.decoder_mask_block_2(self.decoder_mask_block_1(m)))
+                        elif self.options['scale'] == 3 and self.options['grow']:
+                            x, m = self.decoder_block_0(gpu_src_code)
+                            gpu_pred_src_src_prev = self.decoder_prev(self.decoder_block_2(self.decoder_block_1(x)))
+                            gpu_pred_src_srcm_prev = self.decoder_mask_prev(self.decoder_mask_block_2(self.decoder_mask_block_1(m)))
+                            x, m = self.decoder_block_0(gpu_dst_code)
+                            gpu_pred_dst_dst_prev = self.decoder_prev(self.decoder_block_2(self.decoder_block_1(x)))
+                            gpu_pred_dst_dstm_prev = self.decoder_mask_prev(self.decoder_mask_block_2(self.decoder_mask_block_1(m)))
+                            x, m = self.decoder_block_0(gpu_src_dst_code)
+                            gpu_pred_src_dst_prev = self.decoder_prev(self.decoder_block_2(self.decoder_block_1(x)))
+                            gpu_pred_src_dstm_prev = self.decoder_mask_prev(self.decoder_mask_block_2(self.decoder_mask_block_1(m)))
+
+                            gpu_pred_src_src_prev = nn.resize2d_nearest(gpu_pred_src_src_prev, size=2)
+                            gpu_pred_src_srcm_prev = nn.resize2d_nearest(gpu_pred_src_srcm_prev, size=2)
+                            gpu_pred_dst_dst_prev = nn.resize2d_nearest(gpu_pred_dst_dst_prev, size=2)
+                            gpu_pred_dst_dstm_prev = nn.resize2d_nearest(gpu_pred_dst_dstm_prev, size=2)
+                            gpu_pred_src_dst_prev = nn.resize2d_nearest(gpu_pred_src_dst_prev, size=2)
+                            gpu_pred_src_dstm_prev = nn.resize2d_nearest(gpu_pred_src_dstm_prev, size=2)
+
+                            x, m = self.decoder_block_0(gpu_src_code)
+                            gpu_pred_src_src_next = self.decoder(self.decoder_block_3(self.decoder_block_2(self.decoder_block_1(x))))
+                            gpu_pred_src_srcm_next = self.decoder_mask(self.decoder_mask_block_3(self.decoder_mask_block_2(self.decoder_mask_block_1(m))))
+                            x, m = self.decoder_block_0(gpu_dst_code)
+                            gpu_pred_dst_dst_next = self.decoder(self.decoder_block_3(self.decoder_block_2(self.decoder_block_1(x))))
+                            gpu_pred_dst_dstm_next = self.decoder_mask(self.decoder_mask_block_3(self.decoder_mask_block_2(self.decoder_mask_block_1(m))))
+                            x, m = self.decoder_block_0(gpu_src_dst_code)
+                            gpu_pred_src_dst_next = self.decoder(self.decoder_block_3(self.decoder_block_2(self.decoder_block_1(x))))
+                            gpu_pred_src_dstm_next = self.decoder_mask(self.decoder_mask_block_3(self.decoder_mask_block_2(self.decoder_mask_block_1(m))))
+
+                            gpu_pred_src_src = self.alpha * gpu_pred_src_src_next + (1-self.alpha) * gpu_pred_src_src_prev
+                            gpu_pred_src_srcm = self.alpha * gpu_pred_src_srcm_next + (1-self.alpha) * gpu_pred_src_srcm_prev
+                            gpu_pred_dst_dst = self.alpha * gpu_pred_dst_dst_next + (1-self.alpha) * gpu_pred_dst_dst_prev
+                            gpu_pred_dst_dstm = self.alpha * gpu_pred_dst_dstm_next + (1-self.alpha) * gpu_pred_dst_dstm_prev
+                            gpu_pred_src_dst = self.alpha * gpu_pred_src_dst_next + (1-self.alpha) * gpu_pred_src_dst_prev
+                            gpu_pred_src_dstm = self.alpha * gpu_pred_src_dstm_next + (1-self.alpha) * gpu_pred_src_dstm_prev
+                        elif self.options['scale'] == 4 and not self.options['grow']:
+                            x, m = self.decoder_block_0(gpu_src_code)
+                            gpu_pred_src_src = self.decoder(self.decoder_block_3(self.decoder_block_2(self.decoder_block_1(x))))
+                            gpu_pred_src_srcm = self.decoder_mask(self.decoder_mask_block_3(self.decoder_mask_block_2(self.decoder_mask_block_1(m))))
+                            x, m = self.decoder_block_0(gpu_dst_code)
+                            gpu_pred_dst_dst = self.decoder(self.decoder_block_3(self.decoder_block_2(self.decoder_block_1(x))))
+                            gpu_pred_dst_dstm = self.decoder_mask(self.decoder_mask_block_3(self.decoder_mask_block_2(self.decoder_mask_block_1(m))))
+                            x, m = self.decoder_block_0(gpu_src_dst_code)
+                            gpu_pred_src_dst = self.decoder(self.decoder_block_3(self.decoder_block_2(self.decoder_block_1(x))))
+                            gpu_pred_src_dstm = self.decoder_mask(self.decoder_mask_block_3(self.decoder_mask_block_2(self.decoder_mask_block_1(m))))
 
                     if self.options['grow']:
                         gpu_pred_src_src_prev_list.append(gpu_pred_src_src_prev)
