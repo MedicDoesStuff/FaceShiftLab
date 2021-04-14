@@ -1429,7 +1429,8 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
 
         target_srcm, target_dstm = [ nn.to_data_format(x,"NHWC", self.model_data_format) for x in ([target_srcm, target_dstm] )]
 
-        n_samples = min(4, self.get_batch_size(), 800 // self.resolution )
+        # n_samples = min(4, self.get_batch_size(), 800 // self.resolution )
+        n_samples = min(4, self.get_batch_size())
 
         if self.resolution <= 256:
             result = []
