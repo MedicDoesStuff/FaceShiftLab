@@ -528,7 +528,7 @@ class ProgDeepFakeArchi(nn.ArchiBase):
         self.EncoderBlock0 = EncoderBlock0
         self.EncoderBlock1 = EncoderBlock1
         self.EncoderBlock2 = EncoderBlock2
-        self.EncoderBlock2 = EncoderBlock3
+        self.EncoderBlock3 = EncoderBlock3
         self.DecoderBlock0 = DecoderBlock0
         self.DecoderBlock1 = DecoderBlock1
         self.DecoderMaskBlock1 = DecoderMaskBlock1
