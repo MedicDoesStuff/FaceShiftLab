@@ -494,7 +494,7 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                     self.decoder_mask_block_1 = model_archi.DecoderMaskBlock1(d_mask_ch=d_mask_dims, name='decoder_mask_block_1')
                     self.decoder_block_2 = model_archi.DecoderBlock2(d_ch=d_dims, name='decoder_block_2')
                     self.decoder_mask_block_2 = model_archi.DecoderMaskBlock2(d_mask_ch=d_mask_dims, name='decoder_mask_block_2')
-                    self.decoder_block_3 = model_archi.DecoderBlock2(d_ch=d_dims, name='decoder_block_3')
+                    self.decoder_block_3 = model_archi.DecoderBlock3(d_ch=d_dims, name='decoder_block_3')
                     self.decoder_mask_block_3 = model_archi.DecoderMaskBlock3(d_mask_ch=d_mask_dims, name='decoder_mask_block_3')
                     self.decoder = model_archi.ToRgb4(in_ch=d_dims, name='to_rgb_4')
                     self.decoder_mask = model_archi.ToMask4(in_ch_m=d_mask_dims, name='to_mask_4')
