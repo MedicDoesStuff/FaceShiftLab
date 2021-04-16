@@ -569,8 +569,8 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                     self.decoder_mask_block_3 = model_archi.DecoderMaskBlock3(d_mask_ch=d_mask_dims, name='decoder_mask_block_3')
                     self.decoder_block_4 = model_archi.DecoderBlock4(d_ch=d_dims, name='decoder_block_4')
                     self.decoder_mask_block_4 = model_archi.DecoderMaskBlock4(d_mask_ch=d_mask_dims, name='decoder_mask_block_4')
-                    self.decoder = model_archi.ToRgb5(in_ch=d_dims, name='to_rgb_5')
-                    self.decoder_mask = model_archi.ToMask5(in_ch_m=d_mask_dims, name='to_mask_5')
+                    self.decoder = model_archi.ToRgb5(in_ch=d_dims//2, name='to_rgb_5')
+                    self.decoder_mask = model_archi.ToMask5(in_ch_m=d_mask_dims//2, name='to_mask_5')
                     self.model_filename_list += [[self.decoder_prev, 'to_rgb_4.npy'],
                                                  [self.decoder_mask_prev, 'to_mask_4.npy'],
                                                  [self.decoder_block_0, 'decoder_block_0.npy'],
@@ -594,8 +594,8 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                     self.decoder_mask_block_3 = model_archi.DecoderMaskBlock3(d_mask_ch=d_mask_dims, name='decoder_mask_block_3')
                     self.decoder_block_4 = model_archi.DecoderBlock4(d_ch=d_dims, name='decoder_block_4')
                     self.decoder_mask_block_4 = model_archi.DecoderMaskBlock4(d_mask_ch=d_mask_dims, name='decoder_mask_block_4')
-                    self.decoder = model_archi.ToRgb5(in_ch=d_dims, name='to_rgb_5')
-                    self.decoder_mask = model_archi.ToMask5(in_ch_m=d_mask_dims, name='to_mask_5')
+                    self.decoder = model_archi.ToRgb5(in_ch=d_dims//2, name='to_rgb_5')
+                    self.decoder_mask = model_archi.ToMask5(in_ch_m=d_mask_dims//2, name='to_mask_5')
                     self.model_filename_list += [[self.decoder_block_0, 'decoder_block_0.npy'],
                                                  [self.decoder_block_1, 'decoder_block_1.npy'],
                                                  [self.decoder_mask_block_1, 'decoder_mask_block_1.npy'],
