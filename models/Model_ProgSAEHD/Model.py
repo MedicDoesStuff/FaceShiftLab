@@ -231,7 +231,7 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
 
         self.grow_alpha = self.options['grow_alpha']
 
-        self.resolution = resolution = self.options['resolution']
+        self.resolution = resolution = int(self.options['resolution'])
         self.face_type = {'h'  : FaceType.HALF,
                           'mf' : FaceType.MID_FULL,
                           'f'  : FaceType.FULL,
