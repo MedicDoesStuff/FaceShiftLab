@@ -224,14 +224,14 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
             self.options['grow_alpha'] = 0.0
             self.options['scale'] += 1
 
-        self.options['resolution'] = self.options['final_resolution'] // 2**(4-self.options['scale'])
+        self.options['resolution'] = int(self.options['final_resolution'] // 2**(4-self.options['scale']))
 
         if self.options['grow']:
             self.options['resolution'] *= 2
 
         self.grow_alpha = self.options['grow_alpha']
 
-        self.resolution = resolution = int(self.options['resolution'])
+        self.resolution = resolution = self.options['resolution']
         self.face_type = {'h'  : FaceType.HALF,
                           'mf' : FaceType.MID_FULL,
                           'f'  : FaceType.FULL,
