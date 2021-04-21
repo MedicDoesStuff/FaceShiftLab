@@ -1213,7 +1213,7 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                         else:
                             gpu_src_loss =  tf.reduce_mean ( 5*nn.dssim(gpu_target_src_masked_opt, gpu_pred_src_src_masked_opt, max_val=1.0, filter_size=int(resolution/11.6)), axis=[1])
                             gpu_src_loss += tf.reduce_mean ( 5*nn.dssim(gpu_target_src_masked_opt, gpu_pred_src_src_masked_opt, max_val=1.0, filter_size=int(resolution/23.2)), axis=[1])
-                    gpu_src_loss += tf.reduce_mean ( 30*tf.abs ( gpu_target_src_masked_opt - gpu_pred_src_src_masked_opt ), axis=[1,2,3])
+                    gpu_src_loss += tf.reduce_mean ( 10*tf.abs ( gpu_target_src_masked_opt - gpu_pred_src_src_masked_opt ), axis=[1,2,3])
 
                     if eyes_prio or mouth_prio:
                         if eyes_prio and mouth_prio:
@@ -1256,7 +1256,7 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                         else:
                             gpu_dst_loss = tf.reduce_mean ( 5*nn.dssim(gpu_target_dst_masked_opt, gpu_pred_dst_dst_masked_opt, max_val=1.0, filter_size=int(resolution/11.6) ), axis=[1])
                             gpu_dst_loss += tf.reduce_mean ( 5*nn.dssim(gpu_target_dst_masked_opt, gpu_pred_dst_dst_masked_opt, max_val=1.0, filter_size=int(resolution/23.2) ), axis=[1])
-                    gpu_dst_loss += tf.reduce_mean ( 30*tf.abs(  gpu_target_dst_masked_opt- gpu_pred_dst_dst_masked_opt ), axis=[1,2,3])
+                    gpu_dst_loss += tf.reduce_mean ( 10*tf.abs(  gpu_target_dst_masked_opt- gpu_pred_dst_dst_masked_opt ), axis=[1,2,3])
 
 
                     if eyes_prio or mouth_prio:
