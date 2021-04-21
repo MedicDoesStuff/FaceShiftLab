@@ -1215,7 +1215,7 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                         else:
                             gpu_src_loss =  tf.reduce_mean ( 5*nn.dssim(gpu_target_src_masked_opt, gpu_pred_src_src_masked_opt, max_val=1.0, filter_size=int(resolution/11.6)), axis=[1])
                             gpu_src_loss += tf.reduce_mean ( 5*nn.dssim(gpu_target_src_masked_opt, gpu_pred_src_src_masked_opt, max_val=1.0, filter_size=int(resolution/23.2)), axis=[1])
-                        diff = tf.tile(tf.abs(gpu_target_src_masked_opt - gpu_pred_src_src_masked_opt), (5, 1, 1, 1, 1))
+                    diff = tf.tile(tf.abs(gpu_target_src_masked_opt - gpu_pred_src_src_masked_opt), (5, 1, 1, 1, 1))
                     gpu_src_loss += 1 * tf.reduce_mean ( tf.reduce_sum(gaussian_weights[-1, :, :, :, :] * diff, axis=[0, 3, 4]), axis=[2])
 
                     if eyes_prio or mouth_prio:
