@@ -1205,7 +1205,7 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                     gpu_psd_target_dst_style_masked = gpu_pred_src_dst*gpu_target_dstm_style_blur
                     gpu_psd_target_dst_style_anti_masked = gpu_pred_src_dst*(1.0 - gpu_target_dstm_style_blur)
 
-                    gaussian_weights = nn.get_gaussian_weights(gpu_target_src)
+                    gaussian_weights = nn.get_gaussian_weights(input_ch, resolution)
 
                     if self.options['ms_ssim_loss']:
                         gpu_src_loss = 10 * nn.MsSsim(resolution)(gpu_target_src_masked_opt, gpu_pred_src_src_masked_opt, max_val=1.0)
