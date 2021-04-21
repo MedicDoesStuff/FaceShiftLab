@@ -271,7 +271,7 @@ nn.gaussian_blur = gaussian_blur
 def get_gaussian_weights(in_ch, resolution, num_scale=5, sigma=(0.5, 1., 2., 4., 8.)):
     w = np.empty((num_scale, in_ch, resolution, resolution))
     for i in range(num_scale):
-        gaussian = np.exp(-1.*np.arange(-(resolution/2), resolution/2+1)**2/(2*sigma[i]**2))
+        gaussian = np.exp(-1.*np.arange(-(resolution/2-0.5), resolution/2+0.5)**2/(2*sigma[i]**2))
         gaussian = np.outer(gaussian, gaussian.reshape((resolution, 1)))  # extend to 2D
         gaussian = gaussian/np.sum(gaussian)							  # normalization
         gaussian = np.reshape(gaussian, (1, resolution, resolution)) 	  # reshape to 3D
