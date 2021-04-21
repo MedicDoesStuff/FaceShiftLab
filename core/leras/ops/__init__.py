@@ -268,6 +268,20 @@ def gaussian_blur(input, radius=2.0):
     return x
 nn.gaussian_blur = gaussian_blur
 
+def get_gaussian_weights(input, num_scale=5, sigma=(0.5, 1., 2., 4., 8.)):
+    w = np.empty((num_scale,) + input.shape)
+    for i in range(num_scale):
+        gaussian = np.exp(-1.*np.arange(-(input.shape[2]), input.shape[2]/2+1)**2/(2*sigma[i]**2))
+        gaussian = np.outer(gaussian, gaussian.reshape((input.shape[2], 1)))	# extend to 2D
+        gaussian = gaussian/np.sum(gaussian)								# normailization
+        gaussian = np.reshape(gaussian, (1, 1, input.shape[2], input.shape[2])) 	# reshape to 4D
+        gaussian = np.tile(gaussian, (input.shape[0], input.shape[1], 1, 1))
+        w[i,:,:,:,:] = gaussian
+    return w
+
+nn.get_gaussian_weights = get_gaussian_weights
+
+
 def style_loss(target, style, gaussian_blur_radius=0.0, loss_weight=1.0, step_size=1):
     def sd(content, style, loss_weight):
         content_nc = content.shape[ nn.conv2d_ch_axis ]
