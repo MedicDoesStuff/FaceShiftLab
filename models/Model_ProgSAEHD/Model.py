@@ -1217,7 +1217,7 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                             gpu_src_loss += tf.reduce_mean ( 5*nn.dssim(gpu_target_src_masked_opt, gpu_pred_src_src_masked_opt, max_val=1.0, filter_size=int(resolution/23.2)), axis=[1])
 
                     diff = tf.tile(tf.expand_dims(tf.abs(gpu_target_src_masked_opt - gpu_pred_src_src_masked_opt), axis=0), multiples=[5, 1, 1, 1, 1])
-                    gpu_src_loss += 1 * tf.reduce_mean ( tf.reduce_sum(gaussian_weights[-1, :, :, :, :] * diff, axis=[0, 3, 4]), axis=[1])
+                    gpu_src_loss += 1.9 * tf.reduce_mean ( tf.reduce_sum(gaussian_weights[-1, :, :, :, :] * diff, axis=[0, 3, 4]), axis=[1])
 
                     if eyes_prio or mouth_prio:
                         if eyes_prio and mouth_prio:
@@ -1262,7 +1262,7 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
                             gpu_dst_loss += tf.reduce_mean ( 5*nn.dssim(gpu_target_dst_masked_opt, gpu_pred_dst_dst_masked_opt, max_val=1.0, filter_size=int(resolution/23.2) ), axis=[1])
 
                     diff = tf.tile(tf.expand_dims(tf.abs(gpu_target_dst_masked_opt - gpu_pred_dst_dst_masked_opt), axis=0), multiples=[5, 1, 1, 1, 1])
-                    gpu_dst_loss += 1 * tf.reduce_mean ( tf.reduce_sum(gaussian_weights[-1, :, :, :, :] * diff, axis=[0, 3, 4]), axis=[1])
+                    gpu_dst_loss += 1.9 * tf.reduce_mean ( tf.reduce_sum(gaussian_weights[-1, :, :, :, :] * diff, axis=[0, 3, 4]), axis=[1])
 
 
                     if eyes_prio or mouth_prio:
