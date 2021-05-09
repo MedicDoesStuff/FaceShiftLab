@@ -100,9 +100,9 @@ class JhTestArchi(nn.ArchiBase):
 
             class ResStack(nn.ModelBase):
                 def on_build(self, filters, blocks, stride=2):
-                    self.blocks = [ResBlock(filters, stride=1)]
+                    self.blocks = [ResBlock(filters, stride=stride)]
                     for i in range(2, blocks + 1):
-                        self.blocks.append(ResBlock(filters, stride=stride, conv_shortcut=False))
+                        self.blocks.append(ResBlock(filters, conv_shortcut=False))
 
                 def forward(self, inp):
                     x = inp
@@ -118,7 +118,7 @@ class JhTestArchi(nn.ArchiBase):
                     super().__init__(**kwargs)
 
                 def on_build(self):
-                    self.conv1 = nn.Conv2D(self.in_ch, self.e_ch, kernel_size=7, padding='SAME')
+                    self.conv1 = nn.Conv2D(self.in_ch, self.e_ch, kernel_size=7, strides=2, padding='SAME')
                     self.stack1 = ResStack(self.e_ch, 3, stride=1)
                     self.stack2 = ResStack(2 * self.e_ch, 4)
 
