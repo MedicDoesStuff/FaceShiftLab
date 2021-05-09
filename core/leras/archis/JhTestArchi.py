@@ -131,7 +131,7 @@ class JhTestArchi(nn.ArchiBase):
                     x = self.stack2(x)
                     x = self.stack3(x)
 
-                    return nn.flatten(x)
+                    return x
 
                 def get_out_res(self, res):
                     return res // (2**4)
@@ -142,21 +142,25 @@ class JhTestArchi(nn.ArchiBase):
             lowest_dense_res = resolution // (32 if 'd' in opts else 16)
 
             class Inter(nn.ModelBase):
-                def __init__(self, in_ch, ae_ch, ae_out_ch, **kwargs):
-                    self.in_ch, self.ae_ch, self.ae_out_ch = in_ch, ae_ch, ae_out_ch
+                def __init__(self, e_ch, ae_ch, ae_out_ch, **kwargs):
+                    self.e_ch, self.ae_ch, self.ae_out_ch = e_ch, ae_ch, ae_out_ch
                     super().__init__(**kwargs)
 
                 def on_build(self):
-                    in_ch, ae_ch, ae_out_ch = self.in_ch, self.ae_ch, self.ae_out_ch
+                    e_ch, ae_ch, ae_out_ch = self.e_ch, self.ae_ch, self.ae_out_ch
                     if 'u' in opts:
                         self.dense_norm = nn.DenseNorm()
 
-                    self.dense1 = nn.Dense( in_ch, ae_ch )
+                    self.stack4 = ResStack(8 * self.e_ch, 3)
+
+                    self.dense1 = nn.Dense( 32 * self.e_ch, ae_ch )
                     self.dense2 = nn.Dense( ae_ch, lowest_dense_res * lowest_dense_res * ae_out_ch )
                     self.upscale1 = Upscale(ae_out_ch, ae_out_ch)
 
                 def forward(self, inp):
                     x = inp
+                    x = self.stack4(x)
+                    x = nn.global_avg_pool(x)
                     if 'u' in opts:
                         x = self.dense_norm(x)
                     x = self.dense1(x)

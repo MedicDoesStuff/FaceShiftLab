@@ -300,10 +300,10 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
 
             elif 'liae' in archi_type:
                 self.encoder = model_archi.Encoder(in_ch=input_ch, e_ch=e_dims, name='encoder')
-                encoder_out_ch = self.encoder.get_out_ch()*self.encoder.get_out_res(resolution)**2
+                # encoder_out_ch = self.encoder.get_out_ch()*self.encoder.get_out_res(resolution)**2
 
-                self.inter_AB = model_archi.Inter(in_ch=encoder_out_ch, ae_ch=ae_dims, ae_out_ch=ae_dims*2, name='inter_AB')
-                self.inter_B  = model_archi.Inter(in_ch=encoder_out_ch, ae_ch=ae_dims, ae_out_ch=ae_dims*2, name='inter_B')
+                self.inter_AB = model_archi.Inter(e_ch=e_dims, ae_ch=ae_dims, ae_out_ch=ae_dims*2, name='inter_AB')
+                self.inter_B  = model_archi.Inter(e_ch=e_dims, ae_ch=ae_dims, ae_out_ch=ae_dims*2, name='inter_B')
 
                 inter_out_ch = self.inter_AB.get_out_ch()
                 inters_out_ch = inter_out_ch*2

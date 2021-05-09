@@ -186,6 +186,14 @@ def max_pool(x, kernel_size=2, strides=2):
 
 nn.max_pool = max_pool
 
+def global_avg_pool(x):
+    if nn.data_format == "NHWC":
+        return tf.reduce_mean(x, axis=[1, 2])
+    else:
+        return tf.reduce_mean(x, axis=[2, 3])
+
+nn.global_avg_pool = global_avg_pool
+
 def reshape_4D(x, w,h,c):
     if nn.data_format == "NHWC":
         # match NCHW version in order to switch data_format without problems
