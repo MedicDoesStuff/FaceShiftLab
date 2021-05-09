@@ -83,7 +83,7 @@ class JhTestArchi(nn.ArchiBase):
                     self.conv3 = nn.Conv2D(filters, 4 * filters, kernel_size=1, padding='SAME')
 
                 def forward(self, inp):
-                    if self.conv_shortcut:
+                    if self.conv_shortcut is not None:
                         shortcut = self.conv_shortcut(inp)
                     else:
                         shortcut = inp
