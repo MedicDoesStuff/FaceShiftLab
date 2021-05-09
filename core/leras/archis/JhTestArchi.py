@@ -77,6 +77,8 @@ class JhTestArchi(nn.ArchiBase):
 
                     if conv_shortcut:
                         self.conv_shortcut = nn.Conv2D(filters, 4 * filters, kernel_size=1, strides=stride, padding='SAME')
+                    else:
+                        self.conv_shortcut = None
 
                     self.conv1 = nn.Conv2D(filters if conv_shortcut else 4 * filters, filters, kernel_size=1, strides=stride, padding='SAME')
                     self.conv2 = nn.Conv2D(filters, filters, kernel_size=kernel_size, padding='SAME')
