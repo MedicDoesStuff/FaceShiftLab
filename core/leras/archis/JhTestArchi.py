@@ -121,6 +121,7 @@ class JhTestArchi(nn.ArchiBase):
                     self.conv1 = nn.Conv2D(self.in_ch, self.e_ch, kernel_size=7, strides=2, padding='SAME')
                     self.stack1 = ResStack(self.e_ch, 3, stride=1)
                     self.stack2 = ResStack(2 * self.e_ch, 4)
+                    self.stack3 = ResStack(4 * self.e_ch, 6)
 
                 def forward(self, inp):
                     x = self.conv1(inp)
@@ -128,6 +129,7 @@ class JhTestArchi(nn.ArchiBase):
                     x = nn.max_pool(x, kernel_size=3, strides=2)
                     x = self.stack1(x)
                     x = self.stack2(x)
+                    x = self.stack3(x)
 
                     return nn.flatten(x)
 
@@ -135,7 +137,7 @@ class JhTestArchi(nn.ArchiBase):
                     return res // (2**4)
 
                 def get_out_ch(self):
-                    return self.e_ch * 8
+                    return self.e_ch * 16
 
             lowest_dense_res = resolution // (32 if 'd' in opts else 16)
 
