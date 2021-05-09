@@ -72,7 +72,7 @@ class JhTestArchi(nn.ArchiBase):
                     return x
 
             class ResBlock(nn.ModelBase):
-                def on_build(self, filters, kernel_size=3, stride=1, conv_shortcut=True):
+                def on_build(self, filters, kernel_size=3, stride=2, conv_shortcut=True):
                     # self.bn_axis = 3 if nn.data_format == "NHWC" else 1
 
                     if conv_shortcut:
@@ -100,9 +100,9 @@ class JhTestArchi(nn.ArchiBase):
 
             class ResStack(nn.ModelBase):
                 def on_build(self, filters, blocks, stride=2):
-                    self.blocks = [ResBlock(filters, stride=stride)]
+                    self.blocks = [ResBlock(filters, stride=1)]
                     for i in range(2, blocks + 1):
-                        self.blocks.append(ResBlock(filters, conv_shortcut=False))
+                        self.blocks.append(ResBlock(filters, stride=stride, conv_shortcut=False))
 
                 def forward(self, inp):
                     x = inp
