@@ -76,11 +76,11 @@ class JhTestArchi(nn.ArchiBase):
                     # self.bn_axis = 3 if nn.data_format == "NHWC" else 1
 
                     if conv_shortcut:
-                        self.conv_shortcut = nn.Conv2D(4 * filters, kernel_size=1, strides=stride, padding='SAME')
+                        self.conv_shortcut = nn.Conv2D(filters, 4 * filters, kernel_size=1, strides=stride, padding='SAME')
 
-                    self.conv1 = nn.Conv2D(filters, kernel_size=1, strides=stride, padding='SAME')
-                    self.conv2 = nn.Conv2D(filters, kernel_size=kernel_size, padding='SAME')
-                    self.conv3 = nn.Conv2D(4 * filters, kernel_size=1, padding='SAME')
+                    self.conv1 = nn.Conv2D(filters if conv_shortcut else 4 * filters, filters, kernel_size=1, strides=stride, padding='SAME')
+                    self.conv2 = nn.Conv2D(filters, filters, kernel_size=kernel_size, padding='SAME')
+                    self.conv3 = nn.Conv2D(filters, 4 * filters, kernel_size=1, padding='SAME')
 
                 def forward(self, inp):
                     if self.conv_shortcut:
@@ -118,7 +118,7 @@ class JhTestArchi(nn.ArchiBase):
                 def on_build(self):
                     self.conv1 = nn.Conv2D(self.in_ch, self.e_ch, kernel_size=7, padding='SAME')
                     self.stack1 = ResStack(self.e_ch, 3, stride=1)
-                    self.stack2 = ResStack(2 * self.e_ch, 4, stride=1)
+                    self.stack2 = ResStack(2 * self.e_ch, 4)
 
                 def forward(self, inp):
                     x = self.conv1(inp)
