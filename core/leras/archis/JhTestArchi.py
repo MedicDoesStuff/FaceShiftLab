@@ -92,9 +92,9 @@ class JhTestArchi(nn.ArchiBase):
 
                     x = self.conv1(inp)
                     x = tf.nn.leaky_relu(x, 0.2)
-                    x = self.conv2(inp)
+                    x = self.conv2(x)
                     x = tf.nn.leaky_relu(x, 0.2)
-                    x = self.conv3(inp)
+                    x = self.conv3(x)
                     x = tf.nn.leaky_relu(shortcut + x, 0.2)
                     return x
 
