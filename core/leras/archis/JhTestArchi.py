@@ -72,7 +72,7 @@ class JhTestArchi(nn.ArchiBase):
                     return x
 
             class ResBlock(nn.ModelBase):
-                def on_build(self, filters, kernel_size=3, stride=2, conv_shortcut=True):
+                def on_build(self, filters, kernel_size=3, stride=1, conv_shortcut=True):
                     # self.bn_axis = 3 if nn.data_format == "NHWC" else 1
 
                     if conv_shortcut:
