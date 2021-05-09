@@ -254,4 +254,4 @@ class JhTestArchi(nn.ArchiBase):
         self.Inter = Inter
         self.Decoder = Decoder
 
-nn.DeepFakeArchi = DeepFakeArchi
+nn.JhTestArchi = JhTestArchi
