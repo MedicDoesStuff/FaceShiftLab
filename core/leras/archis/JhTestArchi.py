@@ -189,9 +189,10 @@ class JhTestArchi(nn.ArchiBase):
                     self.res2 = ResidualBlock(d_ch*2, kernel_size=3)
                     self.res3 = ResidualBlock(d_ch*1, kernel_size=3)
 
-                    self.out_conv  = nn.Conv2D( d_ch*1, 3, kernel_size=1, padding='SAME')
+                    self.out_conv  = nn.Conv2D(d_ch*1, 3, kernel_size=1, padding='SAME')
 
-                    self.upscalem0 = Upscale(in_ch, d_mask_ch*8, kernel_size=3)
+                    self.in_convm = nn.Conv2D(in_ch, d_mask_ch*16, kernel_size=1, padding='SAME')
+                    self.upscalem0 = Upscale(d_mask_ch*16, d_mask_ch*8, kernel_size=3)
                     self.upscalem1 = Upscale(d_mask_ch*8, d_mask_ch*4, kernel_size=3)
                     self.upscalem2 = Upscale(d_mask_ch*4, d_mask_ch*2, kernel_size=3)
                     self.upscalem3 = Upscale(d_mask_ch*2, d_mask_ch*1, kernel_size=3)
@@ -210,7 +211,8 @@ class JhTestArchi(nn.ArchiBase):
 
                     x = tf.nn.sigmoid(self.out_conv(x))
 
-                    m = self.upscalem0(inp)
+                    m = self.in_convm(inp)
+                    m = self.upscalem0(m)
                     m = self.upscalem1(m)
                     m = self.upscalem2(m)
                     m = self.upscalem3(m)
