@@ -182,7 +182,7 @@ class JhTestArchi(nn.ArchiBase):
                     self.upscale0 = Upscale(in_ch, d_ch*8, kernel_size=3)
                     self.upscale1 = Upscale(d_ch*8, d_ch*4, kernel_size=3)
                     self.upscale2 = Upscale(d_ch*4, d_ch*2, kernel_size=3)
-                    self.upscale3 = Upscale(d_ch*4, d_ch*1, kernel_size=3)
+                    self.upscale3 = Upscale(d_ch*2, d_ch*1, kernel_size=3)
 
                     self.res0 = ResidualBlock(d_ch*8, kernel_size=3)
                     self.res1 = ResidualBlock(d_ch*4, kernel_size=3)
