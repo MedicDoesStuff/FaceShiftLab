@@ -184,80 +184,38 @@ class JhTestArchi(nn.ArchiBase):
                     self.upscale0 = Upscale(in_ch, d_ch*8, kernel_size=3)
                     self.upscale1 = Upscale(d_ch*8, d_ch*4, kernel_size=3)
                     self.upscale2 = Upscale(d_ch*4, d_ch*2, kernel_size=3)
+                    self.upscale3 = Upscale(d_ch*4, d_ch*1, kernel_size=3)
 
                     self.res0 = ResidualBlock(d_ch*8, kernel_size=3)
                     self.res1 = ResidualBlock(d_ch*4, kernel_size=3)
                     self.res2 = ResidualBlock(d_ch*2, kernel_size=3)
+                    self.res3 = ResidualBlock(d_ch*1, kernel_size=3)
 
-                    self.out_conv  = nn.Conv2D( d_ch*2, 3, kernel_size=1, padding='SAME')
+                    self.out_conv  = nn.Conv2D( d_ch*1, 3, kernel_size=1, padding='SAME')
 
                     self.upscalem0 = Upscale(in_ch, d_mask_ch*8, kernel_size=3)
                     self.upscalem1 = Upscale(d_mask_ch*8, d_mask_ch*4, kernel_size=3)
                     self.upscalem2 = Upscale(d_mask_ch*4, d_mask_ch*2, kernel_size=3)
-                    self.out_convm = nn.Conv2D( d_mask_ch*2, 1, kernel_size=1, padding='SAME')
+                    self.upscalem3 = Upscale(d_mask_ch*2, d_mask_ch*1, kernel_size=3)
 
-                    if 'd' in opts:
-                        self.out_conv1  = nn.Conv2D( d_ch*2, 3, kernel_size=3, padding='SAME')
-                        self.out_conv2  = nn.Conv2D( d_ch*2, 3, kernel_size=3, padding='SAME')
-                        self.out_conv3  = nn.Conv2D( d_ch*2, 3, kernel_size=3, padding='SAME')
-                        self.upscalem3 = Upscale(d_mask_ch*2, d_mask_ch*1, kernel_size=3)
-                        self.out_convm = nn.Conv2D( d_mask_ch*1, 1, kernel_size=1, padding='SAME')
-                    else:
-                        self.out_convm = nn.Conv2D( d_mask_ch*2, 1, kernel_size=1, padding='SAME')
+                    self.out_convm = nn.Conv2D(d_mask_ch*1, 1, kernel_size=1, padding='SAME')
 
                 def forward(self, inp):
-                    z = inp
-
-                    x = self.upscale0(z)
+                    x = self.upscale0(inp)
                     x = self.res0(x)
                     x = self.upscale1(x)
                     x = self.res1(x)
                     x = self.upscale2(x)
                     x = self.res2(x)
+                    x = self.upscale3(x)
+                    x = self.res3(x)
 
+                    x = tf.nn.sigmoid(self.out_conv(x))
 
-                    if 'd' in opts:
-                        x0 = tf.nn.sigmoid(self.out_conv(x))
-                        x0 = nn.upsample2d(x0)
-                        x1 = tf.nn.sigmoid(self.out_conv1(x))
-                        x1 = nn.upsample2d(x1)
-                        x2 = tf.nn.sigmoid(self.out_conv2(x))
-                        x2 = nn.upsample2d(x2)
-                        x3 = tf.nn.sigmoid(self.out_conv3(x))
-                        x3 = nn.upsample2d(x3)
-
-                        if nn.data_format == "NHWC":
-                            tile_cfg = ( 1, resolution // 2, resolution //2, 1)
-                        else:
-                            tile_cfg = ( 1, 1, resolution // 2, resolution //2 )
-
-                        z0 =  tf.concat ( ( tf.concat ( (  tf.ones ( (1,1,1,1) ), tf.zeros ( (1,1,1,1) ) ), axis=nn.conv2d_spatial_axes[1] ),
-                                            tf.concat ( ( tf.zeros ( (1,1,1,1) ), tf.zeros ( (1,1,1,1) ) ), axis=nn.conv2d_spatial_axes[1] ) ), axis=nn.conv2d_spatial_axes[0] )
-
-                        z0 = tf.tile ( z0, tile_cfg )
-
-                        z1 =  tf.concat ( ( tf.concat ( ( tf.zeros ( (1,1,1,1) ), tf.ones ( (1,1,1,1) ) ), axis=nn.conv2d_spatial_axes[1] ),
-                                            tf.concat ( ( tf.zeros ( (1,1,1,1) ), tf.zeros ( (1,1,1,1) ) ), axis=nn.conv2d_spatial_axes[1] ) ), axis=nn.conv2d_spatial_axes[0] )
-                        z1 = tf.tile ( z1, tile_cfg )
-
-                        z2 =  tf.concat ( ( tf.concat ( (  tf.zeros ( (1,1,1,1) ), tf.zeros ( (1,1,1,1) ) ), axis=nn.conv2d_spatial_axes[1] ),
-                                            tf.concat ( (  tf.ones ( (1,1,1,1) ), tf.zeros ( (1,1,1,1) ) ), axis=nn.conv2d_spatial_axes[1] ) ), axis=nn.conv2d_spatial_axes[0] )
-                        z2 = tf.tile ( z2, tile_cfg )
-
-                        z3 =  tf.concat ( ( tf.concat ( (  tf.zeros ( (1,1,1,1) ), tf.zeros ( (1,1,1,1) ) ), axis=nn.conv2d_spatial_axes[1] ),
-                                            tf.concat ( (  tf.zeros ( (1,1,1,1) ), tf.ones ( (1,1,1,1) ) ), axis=nn.conv2d_spatial_axes[1] ) ), axis=nn.conv2d_spatial_axes[0] )
-                        z3 = tf.tile ( z3, tile_cfg )
-
-                        x = x0*z0 + x1*z1 + x2*z2 + x3*z3
-                    else:
-                        x = tf.nn.sigmoid(self.out_conv(x))
-
-
-                    m = self.upscalem0(z)
+                    m = self.upscalem0(inp)
                     m = self.upscalem1(m)
                     m = self.upscalem2(m)
-                    if 'd' in opts:
-                        m = self.upscalem3(m)
+                    m = self.upscalem3(m)
                     m = tf.nn.sigmoid(self.out_convm(m))
 
                     return x, m
