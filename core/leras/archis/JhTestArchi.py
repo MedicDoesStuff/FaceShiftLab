@@ -141,24 +141,23 @@ class JhTestArchi(nn.ArchiBase):
                 def get_out_ch(self):
                     return self.e_ch * 16
 
-            lowest_dense_res = resolution // 64
+            lowest_dense_res = resolution // (32 if 'd' in opts else 16)
 
             class Inter(nn.ModelBase):
-                def __init__(self, e_ch, ae_ch, d_ch, **kwargs):
-                    self.e_ch, self.ae_ch, self.d_ch = e_ch, ae_ch, d_ch
+                def __init__(self, e_ch, ae_ch, ae_out_ch, **kwargs):
+                    self.e_ch, self.ae_ch, self.ae_out_ch = e_ch, ae_ch, ae_out_ch
                     super().__init__(**kwargs)
 
                 def on_build(self):
-                    e_ch, ae_ch, d_ch = self.e_ch, self.ae_ch, self.d_ch
+                    e_ch, ae_ch, ae_out_ch = self.e_ch, self.ae_ch, self.ae_out_ch
                     if 'u' in opts:
                         self.dense_norm = nn.DenseNorm()
 
                     self.stack4 = ResStack(8 * self.e_ch, 3)
 
-                    self.dense1 = nn.Dense(32 * self.e_ch, ae_ch)
-                    self.dense2 = nn.Dense(ae_ch, lowest_dense_res * lowest_dense_res * 16 * self.d_ch)
-                    self.upscale1 = Upscale(16 * self.d_ch, 8 * self.d_ch)
-                    self.upscale2 = Upscale(8 * self.d_ch, 4 * self.d_ch)
+                    self.dense1 = nn.Dense( 32 * self.e_ch, ae_ch )
+                    self.dense2 = nn.Dense( ae_ch, lowest_dense_res * lowest_dense_res * ae_out_ch )
+                    self.upscale1 = Upscale(ae_out_ch, ae_out_ch)
 
                 def forward(self, inp):
                     x = inp
@@ -168,16 +167,15 @@ class JhTestArchi(nn.ArchiBase):
                         x = self.dense_norm(x)
                     x = self.dense1(x)
                     x = self.dense2(x)
-                    x = nn.reshape_4D (x, lowest_dense_res, lowest_dense_res, 8 * self.d_ch)
+                    x = nn.reshape_4D (x, lowest_dense_res, lowest_dense_res, self.ae_out_ch)
                     x = self.upscale1(x)
-                    x = self.upscale2(x)
                     return x
 
                 def get_out_res(self):
                     return lowest_dense_res * 2
 
                 def get_out_ch(self):
-                    return 2 * self.d_ch
+                    return self.ae_out_ch
 
             class Decoder(nn.ModelBase):
                 def on_build(self, in_ch, d_ch, d_mask_ch ):
