@@ -50,14 +50,16 @@ class JhTestArchi(nn.ArchiBase):
                     return x
 
             class Upscale(nn.ModelBase):
-                def on_build(self, in_ch, out_ch, kernel_size=3 ):
-                    self.conv1 = nn.Conv2D( in_ch, out_ch*4, kernel_size=kernel_size, padding='SAME')
+                def on_build(self, in_ch, out_ch, kernel_size=3):
+                    self.n = in_ch // out_ch
+                    self.conv1 = nn.Conv2D(in_ch, out_ch*4, kernel_size=kernel_size, padding='SAME')
 
                 def forward(self, x):
-                    x = self.conv1(x)
-                    x = tf.nn.leaky_relu(x, 0.1)
-                    x = nn.depth_to_space(x, 2)
-                    return x
+                    x1 = nn.bilinear_additive_upsampling(x, n=self.n)
+                    x2 = self.conv1(x)
+                    x2 = tf.nn.leaky_relu(x2, 0.1)
+                    x2 = nn.depth_to_space(x2, 2)
+                    return x1 + x2
 
             class ResidualBlock(nn.ModelBase):
                 def on_build(self, ch, kernel_size=3 ):

@@ -170,6 +170,19 @@ def resize2d_nearest(x, size=2):
     return x
 nn.resize2d_nearest = resize2d_nearest
 
+def bilinear_additive_upsampling(inp, n=2, size=2):
+    if nn.data_format == "NCHW":
+        x = resize2d_bilinear(inp[:, 0::n, :, :], size=size)
+        for i in range(1, n):
+            x += resize2d_bilinear(inp[:, i::n, :, :], size=size)
+    else:
+        x = resize2d_bilinear(inp[:, :, :, 0::n], size=size)
+        for i in range(1, n):
+            x += resize2d_bilinear(inp[:, :, :, i::n], size=size)
+    return x
+
+nn.bilinear_additive_upsampling = bilinear_additive_upsampling
+
 def flatten(x):
     if nn.data_format == "NHWC":
         # match NCHW version in order to switch data_format without problems
