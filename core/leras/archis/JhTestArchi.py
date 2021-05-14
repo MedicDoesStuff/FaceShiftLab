@@ -57,9 +57,8 @@ class JhTestArchi(nn.ArchiBase):
                 def forward(self, x):
                     x1 = nn.bilinear_additive_upsampling(x, n=self.n)
                     x2 = self.conv1(x)
-                    x2 = tf.nn.leaky_relu(x2, 0.1)
                     x2 = nn.depth_to_space(x2, 2)
-                    return x1 + x2
+                    return tf.nn.leaky_relu(x1 + x2, 0.1)
 
             class ResidualBlock(nn.ModelBase):
                 def on_build(self, ch, kernel_size=3 ):
