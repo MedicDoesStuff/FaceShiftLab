@@ -193,6 +193,8 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
 
             self.options['pretrain'] = io.input_bool ("Enable pretraining mode", default_pretrain, help_message="Pretrain the model with large amount of various faces. After that, model can be used to train the fakes more quickly.")
 
+            self.options['max_preview_height'] = io.input_number("Max preview height", 800)
+            self.options['max_preview_width'] = io.input_number("Max preview height", 256)
         if self.options['pretrain'] and self.get_pretraining_data_path() is None:
             raise Exception("pretraining_data_path is not defined")
 
@@ -834,9 +836,9 @@ Examples: df, liae, df-d, df-ud, liae-ud, ...
 
         target_srcm, target_dstm = [ nn.to_data_format(x,"NHWC", self.model_data_format) for x in ([target_srcm, target_dstm] )]
 
-        n_samples = min(4, self.get_batch_size(), 800 // self.resolution )
+        n_samples = min(self.get_batch_size(), self.options['max_preview_height'] // self.resolution)
 
-        if self.resolution <= 256:
+        if self.resolution <= self.options['max_preview_width']:
             result = []
 
             st = []
